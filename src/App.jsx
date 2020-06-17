@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import {InsurerView} from './CompanyContacts/InsurerView'
-import {InsurerViewModel} from './CompanyContacts/InsurerViewModel'
+import InsurerViewModel from "./CompanyContacts/InsurerViewModel";
+import InsurerListView from "./CompanyContacts/views/InsurerListView";
 
 // create a viewModel singleton
 const model = new InsurerViewModel()
@@ -9,7 +9,7 @@ const model = new InsurerViewModel()
 function App() {
   return (
     <div className="App">
-      <InsurerView model={model} />
+      <InsurerListView model={model} />
     </div>
   );
 }
