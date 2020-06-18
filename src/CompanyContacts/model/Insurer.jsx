@@ -1,5 +1,6 @@
 import {observable, computed, decorate} from 'mobx'
 import {Address} from "./Address";
+import {InsuranceClass} from "./InsuranceClass";
 
 export class Insurer {
 
@@ -11,15 +12,21 @@ export class Insurer {
 
     address = new Address();
 
-    image
+    insuranceClasses = []
 
-    /*@observable*/ done = false
+    image
 
     // computed values are values derived and automatically updated when the observed
     // observable values changes. For example we use it to determine whenever the insurer is valid
     /*@computed*/ get isValid() {
         // a text is required
         return this.name !== ''
+    }
+
+    addInsuranceClass(name) {
+        if (this.insuranceClasses.filter(insuranceClass => insuranceClass.className === name).length === 0) {
+            this.insuranceClasses.push(new InsuranceClass(name))
+        }
     }
 
 
@@ -30,16 +37,16 @@ export class Insurer {
         return {
             id: this.id,
             name: this.name,
-            done: this.done,
-            address: this.address.serialize()
+            address: this.address.serialize(),
+            insuranceClasses: this.insuranceClasses.map(insuranceClass => insuranceClass.serialize()),
         }
     }
     static deserialize(json){
         const insurer = new Insurer()
         insurer.id = json['id']
         insurer.name = json['name'] || ''
-        insurer.done = json['done'] || false
         insurer.address = Address.deserialize(json['address'])
+        insurer.insuranceClasses = json['insuranceClasses'] ? json['insuranceClasses'].map(insuranceClass => InsuranceClass.deserialize(insuranceClass)) : []
         return insurer
     }
 }
@@ -47,5 +54,6 @@ export class Insurer {
 decorate(Insurer, {
     name: observable,
     done: observable,
+    insuranceClasses: observable,
     isValid: computed,
 })
