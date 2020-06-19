@@ -34,8 +34,10 @@ class ContactPersonView extends React.Component {
 		}
 		else {
 			return <Card>
-				<strong>{person.topic} {person.name}</strong><br/>
-				<strong>{person.phone} / {person.mail} / {person.fax} </strong><br/>
+				<CardContent>
+					<strong>{person.topic} {person.name}</strong><br/>
+					<strong>{person.phone} / {person.mail} / {person.fax} </strong><br/>
+				</CardContent>
 			</Card>
 		}
 	}

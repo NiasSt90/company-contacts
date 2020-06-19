@@ -14,6 +14,8 @@ export class Insurer {
 
     insuranceClasses = []
 
+    hints = ''
+
     image
 
     // computed values are values derived and automatically updated when the observed
@@ -37,6 +39,7 @@ export class Insurer {
         return {
             id: this.id,
             name: this.name,
+            hints: this.hints,
             address: this.address.serialize(),
             insuranceClasses: this.insuranceClasses.map(insuranceClass => insuranceClass.serialize()),
         }
@@ -45,6 +48,7 @@ export class Insurer {
         const insurer = new Insurer()
         insurer.id = json['id']
         insurer.name = json['name'] || ''
+        insurer.hints = json['hints'] || ''
         insurer.address = Address.deserialize(json['address'])
         insurer.insuranceClasses = json['insuranceClasses'] ? json['insuranceClasses'].map(insuranceClass => InsuranceClass.deserialize(insuranceClass)) : []
         return insurer
@@ -53,7 +57,7 @@ export class Insurer {
 
 decorate(Insurer, {
     name: observable,
-    done: observable,
+    hints: observable,
     insuranceClasses: observable,
     isValid: computed,
 })

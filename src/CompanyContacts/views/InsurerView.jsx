@@ -26,6 +26,13 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import ContactPersonView from "./ContactPersonView";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
+import Divider from "@material-ui/core/Divider";
+import TextareaAutosize from "@material-ui/core/TextareaAutosize";
+import CardContent from "@material-ui/core/CardContent";
+import Card from "@material-ui/core/Card";
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -70,9 +77,15 @@ class InsurerView extends React.Component {
 		}
 	}
 
-	changeSelectedTab = (event, value) => {this.setState({selectedTab: value});}
-	handleOpenDialog = () => {this.setState({openDialog: true})}
-	handleCloseDialog = (event, value) => {this.setState({openDialog: false, newClassName: undefined})}
+	changeSelectedTab = (event, value) => {
+		this.setState({selectedTab: value});
+	}
+	handleOpenDialog = () => {
+		this.setState({openDialog: true})
+	}
+	handleCloseDialog = (event, value) => {
+		this.setState({openDialog: false, newClassName: undefined})
+	}
 	handleAddInsuranceClass = (event) => {
 		this.props.insurer.addInsuranceClass(this.state.newClassName)
 		this.handleCloseDialog();
@@ -93,9 +106,11 @@ class InsurerView extends React.Component {
 		const tabBar = (
 				<AppBar position="static">
 					<Tabs value={selectedTab} onChange={this.changeSelectedTab} aria-label="simple tabs example">
-						{insurer.insuranceClasses.map((insuranceClass, i) => <Tab key={i} label={insuranceClass.className} {...a11yProps(i)} />)}
-						{isInEditMode && <IconButton aria-label="Sparte ergänzen" aria-haspopup="true" onClick={this.handleOpenDialog} color="inherit">
-							<AddIcon />
+						{insurer.insuranceClasses.map(
+								(insuranceClass, i) => <Tab key={i} label={insuranceClass.className} {...a11yProps(i)} />)}
+						{isInEditMode && <IconButton aria-label="Sparte ergänzen" aria-haspopup="true"
+															  onClick={this.handleOpenDialog} color="inherit">
+							<AddIcon/>
 						</IconButton>}
 					</Tabs>
 				</AppBar>
@@ -103,11 +118,12 @@ class InsurerView extends React.Component {
 		const tabContent = (<React.Fragment>
 			{insurer.insuranceClasses.map((insuranceClass, i) =>
 					<TabPanel value={selectedTab} key={i} index={i}>
-						{insuranceClass.contactPersons.map((person,i) =>
-								<ContactPersonView key={i} person={person} editMode={isInEditMode} onPersonDelete={this.handlePersonDelete}/>)}
-			</TabPanel>)}
-			{isInEditMode && <Button variant="contained" color="primary" startIcon={<AddIcon />}
-						onClick={this.handleAddPerson}>Kontakt anlegen</Button>
+						{insuranceClass.contactPersons.map((person, i) =>
+								<ContactPersonView key={i} person={person} editMode={isInEditMode}
+														 onPersonDelete={this.handlePersonDelete}/>)}
+					</TabPanel>)}
+			{isInEditMode && <Button variant="contained" color="primary" startIcon={<AddIcon/>}
+											 onClick={this.handleAddPerson}>Kontakt anlegen</Button>
 			}
 		</React.Fragment>)
 
@@ -116,8 +132,9 @@ class InsurerView extends React.Component {
 					<DialogTitle id="form-dialog-title">Bereich hinzufügen</DialogTitle>
 					<DialogContent>
 						<DialogContentText>Name bzw. Kürzel des neuen Bereichs/Sparte</DialogContentText>
-						<TextField	autoFocus margin="dense" id="className" label="Bereich" type="text" fullWidth
-										 value={this.state.newClassName} onChange={e => this.setState({newClassName: e.target.value})}/>
+						<TextField autoFocus margin="dense" id="className" label="Bereich" type="text" fullWidth
+									  value={this.state.newClassName}
+									  onChange={e => this.setState({newClassName: e.target.value})}/>
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={this.handleCloseDialog} name='cancel' color="secondary">Abbrechen</Button>
@@ -126,36 +143,60 @@ class InsurerView extends React.Component {
 				</Dialog>
 		);
 
-		let view = null;
+		let view;
 		if (isInEditMode) {
-			view = <div>
-				<TextField id="street" label="Name" type="text" value={insurer.name}
-							  onChange={e => insurer.name = e.target.value}/>
-				<AddressView address={insurer.address} editMode={true}/>
-				{tabBar}{tabContent}{addinsuranceClassDialog}
-				<br/>
-				<IconButton onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
-				<IconButton onClick={() => model.remove(insurer)}><DeleteIcon/></IconButton>
-			</div>
+			view = <Grid container wrap={"nowrap"}>
+				<Grid item xs={6}>
+					<Paper>
+						<TextField label="Name" type="text" value={insurer.name}
+									  onChange={e => insurer.name = e.target.value}/>
+						<AddressView address={insurer.address} editMode={isInEditMode}/>
+					</Paper>
+				</Grid>
+				<Grid item xs={6}>
+					<Paper>
+						<TextareaAutosize rowsMin={5} placeholder="Hinweise und weitergehende Informationen zum Versicherer"
+												value={insurer.hints} onChange={e => insurer.hints = e.target.value}/>
+					</Paper>
+				</Grid>
+			</Grid>
 		}
 		else {
-			view = <div>
-				<strong>{insurer.name}</strong>
-				<i>{insurer.done ? ' -> DONE!' : ''}</i>
-				<AddressView address={insurer.address} editMode={false}/>
-				{tabBar}{tabContent}
-				<br/>
-				<IconButton onClick={() => model.edit(insurer)}><EditIcon/></IconButton>
-			</div>
+			view = <Grid container wrap={"nowrap"}>
+				<Grid item xs={12}>
+					<Paper>
+						<strong>{insurer.name}</strong>
+						<i>{insurer.done ? ' -> DONE!' : ''}</i>
+						<AddressView address={insurer.address} editMode={isInEditMode}/>
+						<br/>
+					</Paper>
+				</Grid>
+				<Grid item xs={12}>
+					<Typography component="pre" gutterBottom>{insurer.hints}</Typography>
+				</Grid>
+			</Grid>
 		}
+
 		return <ExpansionPanel>
-			<ExpansionPanelSummary
-					expandIcon={<ExpandMoreIcon/>}
-					aria-controls="panel1c-content"
-					id="panel1c-header">
+			<ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
 				{insurer.name}
 			</ExpansionPanelSummary>
-			<ExpansionPanelDetails>{view}</ExpansionPanelDetails>
+			<ExpansionPanelDetails>
+				<Grid container wrap={"nowrap"}>
+					<Grid item xs={6}>
+						{view}
+					</Grid>
+					<Grid item xs={6}>
+						{tabBar}{tabContent}{isInEditMode && addinsuranceClassDialog}
+					</Grid>
+				</Grid>
+			</ExpansionPanelDetails>
+			<Divider/>
+			<ExpansionPanelActions>
+				{isInEditMode && <IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>}
+				{!isInEditMode && <IconButton onClick={() => model.edit(insurer)}><EditIcon/></IconButton>}
+				{!isInEditMode && <IconButton onClick={() => model.remove(insurer)}><DeleteIcon/></IconButton>}
+			</ExpansionPanelActions>
 		</ExpansionPanel>
 	}
 }

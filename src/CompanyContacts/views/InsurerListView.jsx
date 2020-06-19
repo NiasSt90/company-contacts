@@ -2,7 +2,8 @@ import React from 'react'
 import {observer} from 'mobx-react'
 import InsurerView from "./InsurerView";
 import Button from "@material-ui/core/Button";
-
+import Typography from "@material-ui/core/Typography";
+import { useTheme } from "@material-ui/core/styles";
 
 // This is a React component.
 // The property "model" of the passed props object is an instance of our ViewModel class.
@@ -13,20 +14,19 @@ import Button from "@material-ui/core/Button";
 /*@observer*/ class InsurerListView extends React.Component{
 
 	render(){
+
 		const model = this.props.model
 
 		// just some HTML markup based of the ViewModel data.
-		return <div>
-			<h1>React & MobX Insurer List!</h1>
-			<p>
-				<Button onClick={() => model.add()} variant="contained">New Insurer</Button>
-				<Button onClick={() => model.load()} variant="contained">Reload Insurer</Button>
-				<Button onClick={() => model.saveAll()} variant="contained">Save All Insurer</Button>
-			</p>
+		return <React.Fragment>
+			<Typography component="h1" variant="h2">React & MobX Insurer List!</Typography>
+			<Button onClick={() => model.add()} variant="contained">New Insurer</Button>
+			<Button onClick={() => model.load()} variant="contained">Reload Insurer</Button>
+			<Button onClick={() => model.saveAll()} variant="contained">Save All Insurer</Button>
 			{model.insurerList.map((insurer, i) =>
 							<InsurerView key={i} model={model} insurer={insurer}/>
 			)}
-		</div>
+		</React.Fragment>
 	}
 }
 
