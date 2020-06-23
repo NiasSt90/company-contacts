@@ -6,18 +6,39 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from '@material-ui/icons/Delete';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
+import ListItemText from "@material-ui/core/ListItemText";
+import Typography from "@material-ui/core/Typography";
+import {makeStyles} from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Divider from "@material-ui/core/Divider";
 
-class ContactPersonView extends React.Component {
+const useStyles = makeStyles((theme) => ({
+	root: {
+		width: '100%',
+		maxWidth: '36ch',
+		backgroundColor: theme.palette.background.paper,
+		'& span': {
+			margin: theme.spacing(0, 0.5),
+		},
+	},
+	inline: {
+		display: 'inline',
+	},
+}));
 
-	deletePerson = (event) => {
-		this.props.onPersonDelete(this.props.person);
+const ContactPersonView  = observer( (props) => {
+	const classes = useStyles();
+	const editMode = props.editMode;
+	const person = props.person;
+	const deletePerson = (event) => {
+		props.onPersonDelete(props.person);
 	}
 
-	render() {
-		const person = this.props.person;
-		const editMode = this.props.editMode;
-		if (editMode === true) {
-			return <Card>
+	return editMode === true ?
+			<Card>
 				<CardContent>
 					<TextField label="Topic" type="text" value={person.topic} onChange={e => person.topic = e.target.value}/>
 					<TextField label="Name" type="text" value={person.name} onChange={e => person.name = e.target.value}/>
@@ -28,20 +49,23 @@ class ContactPersonView extends React.Component {
 								  onChange={e => person.mail = e.target.value}/>
 				</CardContent>
 				<CardActions>
-					<Button size="small" startIcon={<DeleteIcon/>} onClick={this.deletePerson}>Löschen</Button>
+					<Button size="small" startIcon={<DeleteIcon/>} onClick={deletePerson}>Löschen</Button>
 				</CardActions>
 			</Card>
-		}
-		else {
-			return <Card>
-				<CardContent>
-					<strong>{person.topic} {person.name}</strong><br/>
-					<strong>{person.phone} / {person.mail} / {person.fax} </strong><br/>
-				</CardContent>
-			</Card>
-		}
-	}
+		:	<ListItem>
+				<ListItemAvatar><Avatar>{person.name.charAt(0)}</Avatar></ListItemAvatar>
+				<ListItemText primary={person.topic + ' ' + person.name}
+						secondary={
+							<Grid container alignItems="center" className={classes.root}>
+								{person.phone && <Typography component="span" variant="body2" className={classes.inline} color="textPrimary">Tel. {person.phone}</Typography>}
+								<Divider orientation="vertical" flexItem />
+								{person.mail && <Typography component="span" variant="body2" className={classes.inline} color="textPrimary">E-Mail {person.mail}</Typography>}
+								<Divider orientation="vertical" flexItem />
+								{person.fax && <Typography component="span" variant="body2" className={classes.inline} color="textPrimary">Fax {person.fax}</Typography>}
+							</Grid>
+						}
+				/>
+			</ListItem>
+});
 
-}
-
-export default observer(ContactPersonView);
+export default ContactPersonView;

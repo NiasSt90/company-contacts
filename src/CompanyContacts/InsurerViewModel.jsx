@@ -53,7 +53,7 @@ class InsurerViewModel {
 	saveAll(){
 		// are there invalid insurer?
 		if(this.insurerList.filter(insurer => insurer.isValid === false).length > 0){
-			alert("Unable to save: There are invalid Insurer.")
+			throw new Error("Unable to save: There are invalid Insurer.")
 		}
 
 		if(window.localStorage){
@@ -64,6 +64,7 @@ class InsurerViewModel {
 					)
 			)
 		}
+		return true;
 	}
 }
 
