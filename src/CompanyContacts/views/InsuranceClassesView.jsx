@@ -16,6 +16,7 @@ import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import {observer} from "mobx-react";
+import List from "@material-ui/core/List";
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -29,7 +30,7 @@ function TabPanel(props) {
 			>
 				{value === index && (
 						<Box p={3}>
-							<Typography>{children}</Typography>
+							<Typography component="div">{children}</Typography>
 						</Box>
 				)}
 			</div>
@@ -73,7 +74,7 @@ const InsuranceClassesView = observer( (props) => {
 	}
 
 	return <>
-		<Paper sqaure>
+		<Paper square>
 			<Tabs value={selectedTab} onChange={changeSelectedTab}>
 				{props.insurer.insuranceClasses.map(
 						(insuranceClass, i) => <Tab key={i} label={insuranceClass.className} {...a11yProps(i)} />)}
@@ -84,9 +85,9 @@ const InsuranceClassesView = observer( (props) => {
 		</Paper>
 		{props.insurer.insuranceClasses.map((insuranceClass, i) =>
 				<TabPanel value={selectedTab} key={i} index={i}>
-					{insuranceClass.contactPersons.map((person, i) =>
-							<ContactPersonView key={i} person={person} editMode={props.editMode}
-													 onPersonDelete={handlePersonDelete}/>)}
+					<List>{insuranceClass.contactPersons.map((person, i) => <ContactPersonView
+							key={i} person={person} editMode={props.editMode} onPersonDelete={handlePersonDelete}/>)}
+					</List>
 				</TabPanel>)}
 		{props.editMode && <Button variant="contained" color="primary" startIcon={<AddIcon/>}
 											onClick={handleAddPerson}>Kontakt anlegen</Button>

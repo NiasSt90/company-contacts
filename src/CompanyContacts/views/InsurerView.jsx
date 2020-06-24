@@ -18,62 +18,82 @@ import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
 import Divider from "@material-ui/core/Divider";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import InsuranceClassesView from "./InsuranceClassesView";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import {makeStyles} from "@material-ui/core/styles";
+import CardActions from "@material-ui/core/CardActions";
 
+const useStyles = makeStyles((theme) => ({
+	root: {
+	},
+	section1: {
+		margin: theme.spacing(3, 2),
+	},
+	section2: {
+		margin: theme.spacing(2),
+	},
+	section3: {
+		margin: theme.spacing(3, 1, 1),
+	},
+}));
 
-class InsurerView extends React.Component {
+const InsurerView = observer((props) => {
+	const classes = useStyles();
+	const model = props.model
+	const insurer = props.insurer
+	const isInEditMode = model.editInsurer === insurer;
 
-	render() {
-		const model = this.props.model
-		const insurer = this.props.insurer
-		const isInEditMode = model.editInsurer === insurer;
-
-		let view;
-		if (isInEditMode) {
-			view = <Grid container wrap={"nowrap"}>
-				<Grid item xs={6}>
-					<Paper>
-						<TextField label="Name" type="text" value={insurer.name} onChange={e => insurer.name = e.target.value}/>
-						<AddressView address={insurer.address} editMode={isInEditMode}/>
-					</Paper>
-				</Grid>
-				<Grid item xs={6}>
-					<Paper>
-						<TextareaAutosize rowsMin={5} placeholder="Hinweise und weitergehende Informationen zum Versicherer"
-												value={insurer.hints} onChange={e => insurer.hints = e.target.value}/>
-					</Paper>
-				</Grid>
+	let view;
+	if (isInEditMode) {
+		view = <Grid container wrap={"nowrap"}>
+			<Grid item xs={6}>
+				<Paper>
+					<TextField label="Name" type="text" value={insurer.name} onChange={e => insurer.name = e.target.value}/>
+					<AddressView address={insurer.address} editMode={isInEditMode}/>
+				</Paper>
 			</Grid>
-		}
-		else {
-			view = <Grid container wrap={"nowrap"}>
-				<Grid item xs={12}>
-					<Paper>
-						<strong>{insurer.name}</strong>
-						<i>{insurer.done ? ' -> DONE!' : ''}</i>
-						<AddressView address={insurer.address} editMode={isInEditMode}/>
-						<br/>
-					</Paper>
-				</Grid>
-				<Grid item xs={12}>
-					<Paper>
-						<Typography component="pre" gutterBottom>{insurer.hints}</Typography>
-					</Paper>
-				</Grid>
+			<Grid item xs={6}>
+				<Paper>
+					<TextareaAutosize rowsMin={5} placeholder="Hinweise und weitergehende Informationen zum Versicherer"
+											value={insurer.hints} onChange={e => insurer.hints = e.target.value}/>
+				</Paper>
 			</Grid>
-		}
+		</Grid>
+	}
+	else {
+		view = <Card>
+			<CardContent>
+				<div className={classes.section1}>
+					<Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
+				</div>
+				<div className={classes.section2}>
+					<Typography variant="body2" color="textSecondary" component="p">
+						<strong>{insurer.address.street} {insurer.address.number}</strong><br/>
+						<strong>{insurer.address.zipCode} {insurer.address.city}</strong><br/>
+					</Typography>
+				</div>
+				<Divider variant="middle"/>
+				<div className={classes.section3}>
+					<Typography component="pre" gutterBottom>{insurer.hints}</Typography>
+				</div>
+			</CardContent>
+			<CardActions disableSpacing>
+				<IconButton aria-label="edit">
+					<EditIcon/>
+				</IconButton>
+			</CardActions>
+		</Card>;
+	}
 
-		return <ExpansionPanel>
+	return <div className={classes.root}>
+		<ExpansionPanel>
 			<ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
 				{insurer.name}
 			</ExpansionPanelSummary>
 			<ExpansionPanelDetails>
-				<Grid container wrap={"nowrap"}>
-					<Grid item xs={6}>
-						{view}
-					</Grid>
-					<Grid item xs={6}>
-						<InsuranceClassesView insurer={insurer} editMode={isInEditMode}/>
-					</Grid>
+				<Grid container>
+					<Grid item xs={12} md={6}>{view}</Grid>
+					<Grid item xs={12} md={6}><InsuranceClassesView insurer={insurer} editMode={isInEditMode}/></Grid>
 				</Grid>
 			</ExpansionPanelDetails>
 			<Divider/>
@@ -83,7 +103,7 @@ class InsurerView extends React.Component {
 				{!isInEditMode && <IconButton onClick={() => model.remove(insurer)}><DeleteIcon/></IconButton>}
 			</ExpansionPanelActions>
 		</ExpansionPanel>
-	}
-}
+	</div>
+});
 
-export default observer(InsurerView);
+export default InsurerView;
