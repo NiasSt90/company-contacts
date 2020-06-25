@@ -93,8 +93,8 @@ const InsuranceClassesView = observer( ({insurer}) => {
 		{<Button variant="contained" color="primary" startIcon={<AddIcon/>}
 											onClick={handleAddPerson}>Kontakt anlegen</Button>
 		}
-		<Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">
-			<DialogTitle id="form-dialog-title">Bereich hinzufügen</DialogTitle>
+		<Dialog open={openDialog} onClose={handleCloseDialog}>
+			<DialogTitle>Bereich hinzufügen</DialogTitle>
 			<DialogContent>
 				<DialogContentText>Name bzw. Kürzel des neuen Bereichs/Sparte</DialogContentText>
 				<TextField autoFocus margin="dense" id="className" label="Bereich" type="text" fullWidth

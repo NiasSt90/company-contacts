@@ -18,11 +18,8 @@ export class Insurer {
 
     image
 
-    // computed values are values derived and automatically updated when the observed
-    // observable values changes. For example we use it to determine whenever the insurer is valid
-    /*@computed*/ get isValid() {
-        // a text is required
-        return this.name !== ''
+    constructor(name) {
+        this.name = name;
     }
 
     addInsuranceClass(name) {
@@ -63,5 +60,4 @@ decorate(Insurer, {
     name: observable,
     hints: observable,
     insuranceClasses: observable,
-    isValid: computed,
 })

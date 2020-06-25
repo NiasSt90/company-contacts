@@ -5,6 +5,8 @@
   "dependencies": {
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@react-keycloak/web": "^2.1.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -12,6 +14,7 @@
     "@types/node": "^12.12.47",
     "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
+    "keycloak-js": "^10.0.2",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
     "react": "^16.13.1",

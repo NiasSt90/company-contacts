@@ -20,79 +20,84 @@ import {makeStyles} from "@material-ui/core/styles";
 import CardActions from "@material-ui/core/CardActions";
 import InsurerEditor from "./InsurerEditor";
 import ConfirmDialog from "./ConfirmDialog";
+import {useKeycloak} from "@react-keycloak/web";
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1, 1),
-	},
-	section1: {
-		margin: theme.spacing(3, 2),
-	},
-	section2: {
-		margin: theme.spacing(2),
-	},
-	section3: {
-		margin: theme.spacing(3, 1, 1),
-	},
+    root: {
+        margin: theme.spacing(1, 1),
+    },
+    section1: {
+        margin: theme.spacing(3, 2),
+    },
+    section2: {
+        margin: theme.spacing(2),
+    },
+    section3: {
+        margin: theme.spacing(3, 1, 1),
+    },
 }));
 
 const InsurerView = observer(({model, insurer}) => {
-	const classes = useStyles();
-	const [insurerEditor, openInsurerEditor] = React.useState(false);
-	const [deleteInsurerConfirm, setShowDeleteInsurerConfirm] = React.useState(false);
+    const classes = useStyles();
+    const [insurerEditor, openInsurerEditor] = React.useState(false);
+    const [deleteInsurerConfirm, setShowDeleteInsurerConfirm] = React.useState(false);
+    const [keycloak, keycloakInitialized] = useKeycloak();
 
-	const takeInsurerValues = (values) => {
-		insurer.name = values["name"];
-		insurer.address.street = values["street"];
-		insurer.address.number = values["number"];
-		insurer.address.zipCode = values["zipCode"];
-		insurer.address.city = values["city"];
-		insurer.hints = values["hints"];
-	}
-	const view = <Card>
-			<CardContent>
-				<div className={classes.section1}>
-					<Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
-				</div>
-				<div className={classes.section2}>
-					<Typography variant="body2" color="textSecondary" component="p">
-						<strong>{insurer.address.street} {insurer.address.number}</strong><br/>
-						<strong>{insurer.address.zipCode} {insurer.address.city}</strong><br/>
-					</Typography>
-				</div>
-				<Divider variant="middle"/>
-				<div className={classes.section3}>
-					<Typography component="pre" gutterBottom>{insurer.hints}</Typography>
-				</div>
-			</CardContent>
-			<CardActions disableSpacing>
-				<IconButton onClick={() => openInsurerEditor(true)}>
-					<EditIcon/>
-				</IconButton>
-			</CardActions>
-			<InsurerEditor insurer={insurer} open={insurerEditor} setOpen={openInsurerEditor} onSave={takeInsurerValues}/>
-		</Card>;
-	return <div className={classes.root}>
-		<ExpansionPanel>
-			<ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-				{insurer.name}
-			</ExpansionPanelSummary>
-			<ExpansionPanelDetails>
-				<Grid container>
-					<Grid item xs={12} md={6}>{view}</Grid>
-					<Grid item xs={12} md={6}><InsuranceClassesView insurer={insurer}/></Grid>
-				</Grid>
-			</ExpansionPanelDetails>
-			<Divider/>
-			<ExpansionPanelActions>
-				<IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
-				<IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
-				<ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm} setOpen={setShowDeleteInsurerConfirm} onConfirm={() => model.remove(insurer)}>
-					Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?
-				</ConfirmDialog>
-			</ExpansionPanelActions>
-		</ExpansionPanel>
-	</div>
+    const takeInsurerValues = (values) => {
+        insurer.name = values["name"];
+        insurer.address.street = values["street"];
+        insurer.address.number = values["number"];
+        insurer.address.zipCode = values["zipCode"];
+        insurer.address.city = values["city"];
+        insurer.hints = values["hints"];
+    }
+    const view = <Card>
+        <CardContent>
+            <div className={classes.section1}>
+                <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
+            </div>
+            <div className={classes.section2}>
+                <Typography variant="body2" color="textSecondary" component="p">
+                    <strong>{insurer.address.street} {insurer.address.number}</strong><br/>
+                    <strong>{insurer.address.zipCode} {insurer.address.city}</strong><br/>
+                </Typography>
+            </div>
+            <Divider variant="middle"/>
+            <div className={classes.section3}>
+                <Typography component="pre" gutterBottom>{insurer.hints}</Typography>
+            </div>
+        </CardContent>
+        <CardActions disableSpacing>
+            <IconButton onClick={() => openInsurerEditor(true)}>
+                <EditIcon/>
+            </IconButton>
+        </CardActions>
+        <InsurerEditor insurer={insurer} open={insurerEditor} setOpen={openInsurerEditor} onSave={takeInsurerValues}/>
+    </Card>;
+    return <div className={classes.root}>
+        <ExpansionPanel>
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+                <Grid container>
+                    <Grid item xs={12} md={6}>{view}</Grid>
+                    <Grid item xs={12} md={6}><InsuranceClassesView insurer={insurer}/></Grid>
+                </Grid>
+            </ExpansionPanelDetails>
+            <Divider/>
+            <ExpansionPanelActions>
+                {keycloak.hasResourceRole("Manager", "BVO_Contacts") &&
+                <><IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
+                    <IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
+                    <ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm}
+                                   setOpen={setShowDeleteInsurerConfirm} onConfirm={() => model.remove(insurer)}>
+                        Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?
+                    </ConfirmDialog>
+                </>}
+            </ExpansionPanelActions>
+        </ExpansionPanel>
+    </div>
 });
 
 export default InsurerView;
