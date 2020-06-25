@@ -1,10 +1,5 @@
 import React from "react";
 import {observer} from "mobx-react";
-import TextField from "@material-ui/core/TextField";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Button from "@material-ui/core/Button";
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -21,6 +16,10 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ConfirmDialog from "./ConfirmDialog";
 import ContactPersonEditor from "./ContactPersonEditor";
 import EditIcon from "@material-ui/icons/Edit";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -36,28 +35,29 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const ContactPersonView = observer((props) => {
+const ContactPersonView = observer(({person, onPersonDelete}) => {
 	const classes = useStyles();
 	const [deleteConfirm, setDeleteConfirm] = React.useState(false);
 	const [contactEditor, openContactEditor] = React.useState(false);
-	const person = props.person;
+	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
 
 	const deletePerson = (event) => {
-		props.onPersonDelete(props.person);
+		onPersonDelete(person);
 	}
 	const savePerson = (values) => {
 		Object.keys(values).forEach(key => {
 			person[key] = values[key];
 		})
 	}
+	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
+	const handleCloseMenu = () => {setMenuAnchorEl(null);};
 
 	return <>
 		<ListItem>
 			<ListItemAvatar>
-				<IconButton onClick={() => openContactEditor(true)}><EditIcon/></IconButton>
 				<Avatar>{person.name.charAt(0)}</Avatar></ListItemAvatar>
 			<ListItemText
-					primary={person.topic + ' ' + person.name}
+					primary={<Typography><strong>{person.topic}</strong> {person.name}</Typography>}
 					secondary={
 						<Box display="flex" component="span">
 							{person.mail && <Box flexGrow={1} component="span">
@@ -78,13 +78,22 @@ const ContactPersonView = observer((props) => {
 					}
 			/>
 			<ListItemSecondaryAction>
-				<IconButton onClick={() => setDeleteConfirm(true)}><DeleteIcon/></IconButton>
-				<ConfirmDialog title="Kontakt löschen?" open={deleteConfirm} setOpen={setDeleteConfirm}
-									onConfirm={deletePerson}>
-					Möchten Sie diesen Kontakt wirklisch löschen?
-				</ConfirmDialog>
+				<IconButton onClick={handleOpenMenuClick}><MoreVertIcon/></IconButton>
+				<Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu}>
+					<MenuItem onClick={() => {openContactEditor(true);handleCloseMenu()}}>
+						<ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
+						<ListItemText>Bearbeiten</ListItemText>
+					</MenuItem>
+					<MenuItem onClick={() => {setDeleteConfirm(true);handleCloseMenu()}}>
+						<ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
+						<ListItemText>Entfernen</ListItemText>
+					</MenuItem>
+				</Menu>
 			</ListItemSecondaryAction>
 		</ListItem>
+		<ConfirmDialog title="Kontakt löschen?" open={deleteConfirm} setOpen={setDeleteConfirm} onConfirm={deletePerson}>
+			Möchten Sie die Kontaktdaten für {person.name} wirklisch löschen?
+		</ConfirmDialog>
 		<ContactPersonEditor person={person} open={contactEditor} setOpen={openContactEditor} onSave={savePerson}/>
 	</>
 });

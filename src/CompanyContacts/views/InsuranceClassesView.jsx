@@ -49,7 +49,7 @@ function a11yProps(index) {
 	};
 }
 
-const InsuranceClassesView = observer( (props) => {
+const InsuranceClassesView = observer( ({insurer}) => {
 	const [selectedTab, setSelectedTab] = React.useState(0);
 	const [newClassName, setNewClassName] = React.useState("");
 	const [openDialog, setOpenDialog] = React.useState(false);
@@ -57,10 +57,13 @@ const InsuranceClassesView = observer( (props) => {
 		setSelectedTab(value);
 	}
 	const handleAddPerson = (event) => {
-		props.insurer.insuranceClasses[selectedTab].addPerson();
+		insurer.insuranceClasses[selectedTab].addPerson();
 	}
 	const handlePersonDelete = (person) => {
-		props.insurer.insuranceClasses[selectedTab].removePerson(person);
+		insurer.insuranceClasses[selectedTab].removePerson(person);
+		if (insurer.insuranceClasses[selectedTab].isEmpty()) {
+			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
+		}
 	}
 	const handleOpenDialog = () => {
 		setOpenDialog(true);
@@ -69,27 +72,25 @@ const InsuranceClassesView = observer( (props) => {
 		setOpenDialog(false);
 	}
 	const handleAddInsuranceClass = (event) => {
-		props.insurer.addInsuranceClass(newClassName);
+		insurer.addInsuranceClass(newClassName);
 		handleCloseDialog();
 	}
 
 	return <>
 		<Paper square>
 			<Tabs value={selectedTab} onChange={changeSelectedTab}>
-				{props.insurer.insuranceClasses.map(
+				{insurer.insuranceClasses.map(
 						(insuranceClass, i) => <Tab key={i} label={insuranceClass.className} {...a11yProps(i)} />)}
-				{props.editMode && <IconButton onClick={handleOpenDialog} color="inherit">
-					<AddIcon/>
-				</IconButton>}
+				{<IconButton onClick={handleOpenDialog} color="inherit"><AddIcon/></IconButton>}
 			</Tabs>
 		</Paper>
-		{props.insurer.insuranceClasses.map((insuranceClass, i) =>
+		{insurer.insuranceClasses.map((insuranceClass, i) =>
 				<TabPanel value={selectedTab} key={i} index={i}>
 					<List>{insuranceClass.contactPersons.map((person, i) => <ContactPersonView
-							key={i} person={person} editMode={props.editMode} onPersonDelete={handlePersonDelete}/>)}
+							key={i} person={person} onPersonDelete={handlePersonDelete}/>)}
 					</List>
 				</TabPanel>)}
-		{props.editMode && <Button variant="contained" color="primary" startIcon={<AddIcon/>}
+		{<Button variant="contained" color="primary" startIcon={<AddIcon/>}
 											onClick={handleAddPerson}>Kontakt anlegen</Button>
 		}
 		<Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="form-dialog-title">

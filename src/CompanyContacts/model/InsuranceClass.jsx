@@ -18,6 +18,10 @@ export class InsuranceClass {
 		this.contactPersons = this.contactPersons.filter(p => p !== person);
 	}
 
+	isEmpty() {
+		return this.contactPersons.length === 0;
+	}
+
 	serialize(){
 		return {
 			className: this.className,

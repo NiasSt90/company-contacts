@@ -31,6 +31,10 @@ export class Insurer {
         }
     }
 
+    delInsuranceClass(clazz) {
+        this.insuranceClasses = this.insuranceClasses.filter(x => x !== clazz);
+    }
+
 
     // this two methods will serialize and deserialize the insurer
     // to keep the example clean I have done them, but you should consider using
