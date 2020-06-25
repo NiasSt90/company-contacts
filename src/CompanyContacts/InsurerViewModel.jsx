@@ -8,11 +8,19 @@ class InsurerViewModel {
 	// from the insurer list should be tracked by the view and/or computed values.
 	/*@observable*/ insurerList = []
 
-	/*@observable*/ editInsurer = null
+	/*@observable*/ searchResultList = []
+
+	state = "pending" // "pending" / "done" / "error"
 
 	// when the viewmodel is constructed, attempt to load the insurer.
 	constructor(){
 		this.load()
+	}
+
+	search(searchText) {
+		this.state = "pending";
+		this.searchResultList = this.insurerList.filter(f => f.name.includes(searchText));
+		this.state = "done";
 	}
 
 //	@action
@@ -20,10 +28,6 @@ class InsurerViewModel {
 		const newInsurer = new Insurer()
 		this.insurerList.push(newInsurer)
 		return newInsurer
-	}
-
-	edit(insurer) {
-		this.editInsurer = insurer;
 	}
 
 //	@action
@@ -34,19 +38,27 @@ class InsurerViewModel {
 		}
 	}
 
+//	@action
 	save(insurer){
-		this.editInsurer = null
+		this.state = "pending";
+		//HACK erstmal alle Speichern, bis REST-Backend single-save erlaubt
+		if (this.saveAll()) {
+			this.state = "done";
+		}
 	}
 
 //	@action
 	load(){
+		this.state = "pending";
 		// if the browser has support for localStorage, try to retrieve the saved insurer
 		if(window.localStorage){
 			const json = JSON.parse(window.localStorage.getItem("insurerList") || "[]")
 
 			// Notice: the insurer => Insurer.deserialize(insurer) is an ES2015 arrow function
 			this.insurerList = json.map(insurer => Insurer.deserialize(insurer))
+			this.searchResultList = this.insurerList;
 		}
+		this.state = "done";
 	}
 
 //	@action
@@ -70,7 +82,8 @@ class InsurerViewModel {
 
 decorate(InsurerViewModel, {
 	insurerList: observable,
-	editInsurer: observable,
+	searchResultList: observable,
+	state: observable,
 	add: action,
 	remove: action,
 	load: action,

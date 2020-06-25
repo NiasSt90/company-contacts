@@ -23,6 +23,7 @@ import ConfirmDialog from "./ConfirmDialog";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
+		margin: theme.spacing(1, 1),
 	},
 	section1: {
 		margin: theme.spacing(3, 2),
@@ -84,7 +85,7 @@ const InsurerView = observer(({model, insurer}) => {
 			</ExpansionPanelDetails>
 			<Divider/>
 			<ExpansionPanelActions>
-				{<IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>}
+				<IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
 				<IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
 				<ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm} setOpen={setShowDeleteInsurerConfirm} onConfirm={() => model.remove(insurer)}>
 					Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?

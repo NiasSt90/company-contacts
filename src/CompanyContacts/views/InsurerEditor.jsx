@@ -7,11 +7,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
-import Divider from "@material-ui/core/Divider";
 import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
 const InsurerEditor = ({insurer, open, setOpen, onSave}) => {
@@ -44,7 +41,7 @@ const InsurerEditor = ({insurer, open, setOpen, onSave}) => {
 		setOpen(false);
 	};
 	return <Dialog open={open} onClose={handleCancel}>
-		<DialogTitle id="form-dialog-title">Versicherer</DialogTitle>
+		<DialogTitle id="InsurerEditorDialog">Versicherer</DialogTitle>
 		<DialogContent>
 			<DialogContentText>
 				Versicherer bearbeiten...

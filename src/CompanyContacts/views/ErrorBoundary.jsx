@@ -1,5 +1,5 @@
 import withStyles from "@material-ui/core/styles/withStyles";
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 
 const styles = theme => ({

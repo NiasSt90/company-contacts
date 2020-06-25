@@ -1,34 +1,20 @@
 import React from 'react'
 import {observer} from 'mobx-react'
 import InsurerView from "./InsurerView";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import ErrorBoundary from "./ErrorBoundary";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import AppBar from "@material-ui/core/AppBar";
 
-// This is a React component.
-// The property "model" of the passed props object is an instance of our ViewModel class.
-// do you remember all those @observable and @computed?
-// In order to let your React component automatically update whenever any of
-// those observable property of an object in the component props update,
-// you should pass your component to the "observer" function/decorator
-/*@observer*/ class InsurerListView extends React.Component{
+const InsurerListView = observer(({model}) => {
+			return <React.Fragment>
+				{model.state === "pending" && <LinearProgress />}
+				<ErrorBoundary>
+					{model.searchResultList.map((insurer, i) =>
+							<InsurerView key={i} model={model} insurer={insurer}/>
+					)}
+				</ErrorBoundary>
+			</React.Fragment>
+		}
+);
 
-	render(){
-		const model = this.props.model
-
-		// just some HTML markup based of the ViewModel data.
-		return <React.Fragment>
-			<ErrorBoundary>
-				<Button onClick={() => model.add()} variant="contained">New Insurer</Button>
-				<Button onClick={() => model.load()} variant="contained">Reload Insurer</Button>
-				<Button onClick={() => model.saveAll()} variant="contained">Save All Insurer</Button>
-				<Typography component="h1" variant="h2">React & MobX Insurer List!</Typography>
-				{model.insurerList.map((insurer, i) =>
-								<InsurerView key={i} model={model} insurer={insurer}/>
-				)}
-			</ErrorBoundary>
-		</React.Fragment>
-	}
-}
-
-export default observer(InsurerListView);
+export default InsurerListView;
