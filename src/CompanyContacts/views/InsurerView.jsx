@@ -50,11 +50,13 @@ const InsurerView = observer(({model, insurer}) => {
         insurer.address.zipCode = values["zipCode"];
         insurer.address.city = values["city"];
         insurer.hints = values["hints"];
+        insurer.imgDataURL = values["imgDataURL"];
     }
     const view = <Card>
         <CardContent>
             <div className={classes.section1}>
-                <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
+                {insurer.imgDataURL && <Typography component="img" src={insurer.imgDataURL}/>}
+                {!insurer.imgDataURL && <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>}
             </div>
             <div className={classes.section2}>
                 <Typography variant="body2" color="textSecondary" component="p">

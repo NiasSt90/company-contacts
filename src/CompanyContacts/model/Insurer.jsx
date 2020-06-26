@@ -16,7 +16,7 @@ export class Insurer {
 
     hints = ''
 
-    image
+    imgDataURL
 
     constructor(name) {
         this.name = name;
@@ -41,6 +41,7 @@ export class Insurer {
             id: this.id,
             name: this.name,
             hints: this.hints,
+            imgDataURL: this.imgDataURL,
             address: this.address.serialize(),
             insuranceClasses: this.insuranceClasses.map(insuranceClass => insuranceClass.serialize()),
         }
@@ -50,6 +51,7 @@ export class Insurer {
         insurer.id = json['id']
         insurer.name = json['name'] || ''
         insurer.hints = json['hints'] || ''
+        insurer.imgDataURL = json['imgDataURL'] || ''
         insurer.address = Address.deserialize(json['address'])
         insurer.insuranceClasses = json['insuranceClasses'] ? json['insuranceClasses'].map(insuranceClass => InsuranceClass.deserialize(insuranceClass)) : []
         return insurer
