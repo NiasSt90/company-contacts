@@ -14,6 +14,7 @@ import keycloak from "./keycloak";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {KeycloakProvider} from "@react-keycloak/web";
 import MuiAlert from "@material-ui/lab/Alert";
+import settings from "./settings";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 // create a viewModel singleton
-const model = new InsurerViewModel("https://vo-contacts.barmenia.de/contact")
+const model = new InsurerViewModel(settings.REST_API_CONTACTS)
 
 const App = observer( () =>  {
 	const classes = useStyles();

@@ -1,4 +1,9 @@
 import Keycloak from "keycloak-js";
+import settings from "./settings";
 
-const keycloak = new Keycloak();
-export default keycloak;
+export default Keycloak({
+	"realm": settings.KEYCLOAK_REALM,
+	"url": settings.KEYCLOAK_URL,
+	"clientId": settings.KEYCLOAK_CLIENTID,
+});
+
