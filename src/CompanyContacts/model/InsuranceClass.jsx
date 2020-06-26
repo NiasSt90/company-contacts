@@ -30,19 +30,21 @@ export class InsuranceClass {
 	}
 
 	isEmpty() {
-		return this.contactPersons.length === 0;
+		return this.contactPersons.length === 0 && this.links.length === 0;
 	}
 
 	serialize(){
 		return {
 			className: this.className,
 			contactPersons: this.contactPersons.map(person => person.serialize()),
+			links: this.links.map(link => link.serialize()),
 		}
 	}
 	static deserialize(json){
 		const insuranceClass = new InsuranceClass()
 		insuranceClass.className = json['className'] || ''
 		insuranceClass.contactPersons = json['contactPersons'] ? json['contactPersons'].map(person => ContactPerson.deserialize(person)) : []
+		insuranceClass.links = json['links'] ? json['links'].map(link => ContactLink.deserialize(link)) : []
 		return insuranceClass
 	}
 
@@ -51,4 +53,5 @@ export class InsuranceClass {
 decorate(InsuranceClass, {
 	className: observable,
 	contactPersons: observable,
+	links: observable
 })

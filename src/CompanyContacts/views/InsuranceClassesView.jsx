@@ -17,6 +17,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import {observer} from "mobx-react";
 import List from "@material-ui/core/List";
+import ContactLinkView from "./ContactLinkView";
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -68,6 +69,12 @@ const InsuranceClassesView = observer( ({insurer}) => {
 			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
 		}
 	}
+	const handleLinkDelete = (link) => {
+		insurer.insuranceClasses[selectedTab].removeLink(link);
+		if (insurer.insuranceClasses[selectedTab].isEmpty()) {
+			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
+		}
+	}
 	const handleOpenDialog = () => {
 		setOpenDialog(true);
 	}
@@ -89,10 +96,14 @@ const InsuranceClassesView = observer( ({insurer}) => {
 		</Paper>
 		{insurer.insuranceClasses.map((insuranceClass, i) =>
 				<TabPanel value={selectedTab} key={i} index={i}>
-					<List>{insuranceClass.contactPersons.map((person, i) => <ContactPersonView
-							key={i} person={person} onPersonDelete={handlePersonDelete}/>)}
+					<List>
+						{insuranceClass.contactPersons.map((person, i) =>
+								<ContactPersonView key={i} person={person} onPersonDelete={handlePersonDelete}/>)}
 					</List>
-
+					<List>
+						{insuranceClass.links.map((link, i) =>
+							<ContactLinkView key={i} link={link} onLinkDelete={handleLinkDelete}/>)}
+					</List>
 				</TabPanel>)}
 		{<Button variant="contained" color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt anlegen</Button>}
 		{<Button variant="contained" color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link anlegen</Button>}
