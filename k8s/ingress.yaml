@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: bvo-preview1
+  namespace: test
+  labels:
+    traffic-type: external
+    app: bvo-ui
+    product: preview
+    component: react
+    stage: prod
+    customer: bvo
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/proxy-body-size: 100m
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+spec:
+  rules:
+    - host: bvo-preview1.onesty-tech.de
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: bvo-preview1
+              servicePort: 80

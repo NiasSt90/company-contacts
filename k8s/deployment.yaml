@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bvo-preview1
+  namespace: test
+  labels:
+    app: bvo-ui
+    product: preview
+    component: react
+    stage: prod
+    customer: bvo
+spec:
+  selector:
+    app: bvo-preview1
+  ports:
+    - port: 80
+      targetPort: 3000
+      name: http
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bvo-preview1
+  namespace: test
+  labels:
+    app: bvo-ui
+    product: preview
+    component: react
+    stage: prod
+    customer: bvo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bvo-preview1
+  template:
+    metadata:
+      labels:
+        app: bvo-preview1
+    spec:
+      containers:
+        - image: nexus-docker.onesty-tech.de/bvo-contacts-ui
+          imagePullPolicy: Always
+          name: bvo-preview1
+          resources:
+            limits:
+              cpu: 1
+              memory: 200Mi
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 3

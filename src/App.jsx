@@ -58,7 +58,7 @@ const App = observer( () =>  {
 
 						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
 							Diese Anwendung ist als technical-Preview zu betrachten.<br/>
-							Aktuell darf jeder hier jeder alles Anlegen/Bearbeiten/Löschen....
+							Aktuell darf jeder alles Anlegen/Bearbeiten/Löschen....
 						</MuiAlert>
 					</div>
 				</div>
