@@ -13,6 +13,7 @@ import MyAppBar from "./MyAppBar";
 import keycloak from "./keycloak";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {KeycloakProvider} from "@react-keycloak/web";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -21,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 // create a viewModel singleton
-const model = new InsurerViewModel("http://localhost:8080/contact")
+const model = new InsurerViewModel("https://vo-contacts.barmenia.de/contact")
 
 const App = observer( () =>  {
 	const classes = useStyles();
@@ -47,13 +48,18 @@ const App = observer( () =>  {
 		<KeycloakProvider
 			autoRefreshToken LoadingComponent={<CircularProgress/>}
 			onTokens={onToken}
-			keycloak={keycloak} initConfig={{onLoad: 'check-sso', promiseType: 'native'}}>
+			keycloak={keycloak} initConfig={{onLoad: 'login-required', promiseType: 'native', checkLoginIframe: false}}>
 			<ThemeProvider theme={selectedTheme}>
 				<div className={classes.root}>
 					<CssBaseline/>
 					<div className="App">
 						<MyAppBar model={model} darkState={darkState} handleThemeChange={handleThemeChange}/>
 						<InsurerListView model={model}/>
+
+						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
+							Diese Anwendung ist als technical-Preview zu betrachten.<br/>
+							Aktuell darf jeder hier jeder alles Anlegen/Bearbeiten/Löschen....
+						</MuiAlert>
 					</div>
 				</div>
 			</ThemeProvider>

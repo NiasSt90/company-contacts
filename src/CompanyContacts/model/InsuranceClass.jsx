@@ -1,5 +1,6 @@
 import {decorate, observable} from "mobx";
 import {ContactPerson} from "./ContactPerson";
+import {ContactLink} from "./ContactLink";
 
 export class InsuranceClass {
 	constructor(name) {
@@ -10,12 +11,22 @@ export class InsuranceClass {
 
 	contactPersons = []
 
+	links = []
+
 	addPerson() {
 		this.contactPersons.push(new ContactPerson())
 	}
 
 	removePerson(person) {
 		this.contactPersons = this.contactPersons.filter(p => p !== person);
+	}
+
+	addLink() {
+		this.links.push(new ContactLink())
+	}
+
+	removeLink(link) {
+		this.links = this.links.filter(l => l !== link);
 	}
 
 	isEmpty() {

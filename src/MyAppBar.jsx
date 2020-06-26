@@ -131,7 +131,7 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
                 </div>
             </Toolbar>
         </AppBar>
-        {model.state === "pending" && <LinearProgress />}
+        {model.state === "pending" && <LinearProgress variant="indeterminate" color="secondary" />}
         <Snackbar
             open={model.messageState}
             onClose={() => model.resetMessageState()}

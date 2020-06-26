@@ -22,6 +22,11 @@ const useFetch = (endpoint) => {
                 throw new Error(err);
             });
     };
+    const index = (page = {page: 0, size:10}) => {
+        const url = `${endpoint}/?page=${page.page}&size=${page.size}`;
+        return customFetch(url)
+              .then(response => response.json());
+    }
     const get = id => {
         const url = `${endpoint}${id ? `/${id}` : "/?page=0&size=100"}`;
         return customFetch(url)
@@ -45,12 +50,13 @@ const useFetch = (endpoint) => {
         const url = `${endpoint}/${id}`;
         return customFetch(url, "DELETE");
     };
-    const search = (query) => {
-        const url = `${endpoint}/search?query=${query}`;
+    const search = (query, pagination= {page: 0, size: 10}) => {
+        const url = `${endpoint}/search?query=${query}&page=${pagination.page}&size=${pagination.size}`;
         return customFetch(url, "GET")
             .then(response => response.json());
     }
     return {
+        index,
         get,
         post,
         put,

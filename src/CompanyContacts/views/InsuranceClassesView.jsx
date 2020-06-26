@@ -59,6 +59,9 @@ const InsuranceClassesView = observer( ({insurer}) => {
 	const handleAddPerson = (event) => {
 		insurer.insuranceClasses[selectedTab].addPerson();
 	}
+	const handleAddLink = (event) => {
+		insurer.insuranceClasses[selectedTab].addLink();
+	}
 	const handlePersonDelete = (person) => {
 		insurer.insuranceClasses[selectedTab].removePerson(person);
 		if (insurer.insuranceClasses[selectedTab].isEmpty()) {
@@ -89,10 +92,10 @@ const InsuranceClassesView = observer( ({insurer}) => {
 					<List>{insuranceClass.contactPersons.map((person, i) => <ContactPersonView
 							key={i} person={person} onPersonDelete={handlePersonDelete}/>)}
 					</List>
+
 				</TabPanel>)}
-		{<Button variant="contained" color="primary" startIcon={<AddIcon/>}
-											onClick={handleAddPerson}>Kontakt anlegen</Button>
-		}
+		{<Button variant="contained" color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt anlegen</Button>}
+		{<Button variant="contained" color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link anlegen</Button>}
 		<Dialog open={openDialog} onClose={handleCloseDialog}>
 			<DialogTitle>Bereich hinzufügen</DialogTitle>
 			<DialogContent>

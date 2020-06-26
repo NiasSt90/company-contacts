@@ -11,6 +11,11 @@ class InsurerViewModel {
     message = undefined
     messageSeverity = "success"
 
+    currentPage = {page: 0, size: 10, totalElements: 0, totalPages: 0, first: true, last: true}
+
+    constructor(baseUrl) {
+        this.api = useFetch(baseUrl);
+    }
     get messageState() {
         return this.message !== undefined;
     }
@@ -30,9 +35,17 @@ class InsurerViewModel {
         this.message = msg;
         this.messageSeverity = "success";
     }
-
-    constructor(baseUrl) {
-        this.api = useFetch(baseUrl);
+    onResults(result) {
+        console.log(result);
+        this.state = "done";
+        this.searchResultList = result.content.map(content => InsurerViewModel.mapToInsurer(content));
+        this.currentPage = {page: result.number, size: result.size,
+            totalElements:result.totalElements, totalPages: result.totalPages,
+            first:result.first, last:result.last};
+    }
+    changeToPage(page) {
+        this.currentPage.page = page - 1;
+        this.search(this.searchText);
     }
 
     //	@action
@@ -42,11 +55,10 @@ class InsurerViewModel {
             return;
         }
         this.onStart();
-        this.api.search(searchText).then(
+        this.searchText = searchText;
+        this.api.search(searchText, this.currentPage).then(
             action("fetchSuccess", result => {
-                console.log(result);
-                this.searchResultList = result.content.map(content => InsurerViewModel.mapToInsurer(content));
-                this.onSuccess()
+                this.onResults(result);
             }),
             action("fetchError", error => {
                 this.onError(error)
@@ -96,10 +108,9 @@ class InsurerViewModel {
 //	@action
     load() {
         this.onStart();
-        this.api.get().then(
+        this.api.index(this.currentPage).then(
             action("fetchSuccess", result => {
-                this.searchResultList = result.content.map(content => InsurerViewModel.mapToInsurer(content));
-                this.onSuccess()
+                this.onResults(result);
             }),
             action("fetchError", error => {
                 this.onError(error);
@@ -119,7 +130,10 @@ decorate(InsurerViewModel, {
     searchResultList: observable,
     state: observable,
     message: observable,
+    currentPage: observable,
     messageState: computed,
+
+    changeToPage: action,
     search: action,
     add: action,
     remove: action,
