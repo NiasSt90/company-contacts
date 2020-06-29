@@ -10,10 +10,12 @@ const useFetch = (endpoint) => {
         url,
         method = "GET",
         body = false,
+        mode= "cors",
         headers = defaultHeader()
     ) => {
         const options = {
             method,
+            mode,
             headers
         };
         if (body) options.body = JSON.stringify(body);

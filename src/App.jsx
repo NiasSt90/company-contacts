@@ -43,20 +43,31 @@ const App = observer( () =>  {
 	});
 	const onToken = (tokens) => {
 		sessionStorage.setItem('kc-token', tokens.token);
-		model.load();
+	}
+	const onKeycloakEvent = (event, error) => {
+		console.log('onKeycloakEvent', event, error)
+		switch (event) {
+			case "onAuthSuccess": model.load();break;
+			case "onReady":
+			case "onAuthError":
+			case "onAuthRefreshSuccess":
+			case "onAuthRefreshError":
+			case "onTokenExpired":
+			case "onAuthLogout":
+				break;
+		}
 	}
 	return (
 		<KeycloakProvider
-			autoRefreshToken LoadingComponent={<CircularProgress/>}
-			onTokens={onToken}
-			keycloak={keycloak} initConfig={{onLoad: 'login-required', promiseType: 'native', checkLoginIframe: false}}>
+				keycloak={keycloak}
+				initConfig={{onLoad: 'login-required', promiseType: 'native', checkLoginIframe: true}}
+				LoadingComponent={<CircularProgress/>} onEvent={onKeycloakEvent} onTokens={onToken}>
 			<ThemeProvider theme={selectedTheme}>
 				<div className={classes.root}>
 					<CssBaseline/>
 					<div className="App">
 						<MyAppBar model={model} darkState={darkState} handleThemeChange={handleThemeChange}/>
 						<InsurerListView model={model}/>
-
 						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
 							Diese Anwendung ist als technical-Preview zu betrachten.<br/>
 							Aktuell darf jeder alles Anlegen/Bearbeiten/Löschen....

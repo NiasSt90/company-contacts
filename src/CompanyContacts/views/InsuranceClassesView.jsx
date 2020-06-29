@@ -1,6 +1,5 @@
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import Paper from "@material-ui/core/Paper";
 import React from "react";
@@ -18,6 +17,9 @@ import Dialog from "@material-ui/core/Dialog";
 import {observer} from "mobx-react";
 import List from "@material-ui/core/List";
 import ContactLinkView from "./ContactLinkView";
+import {useRoles} from "../../hooks/useRoles";
+import Grid from "@material-ui/core/Grid";
+
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -50,7 +52,8 @@ function a11yProps(index) {
 	};
 }
 
-const InsuranceClassesView = observer( ({insurer}) => {
+const InsuranceClassesView = observer(({insurer}) => {
+	const {isManager} = useRoles();
 	const [selectedTab, setSelectedTab] = React.useState(0);
 	const [newClassName, setNewClassName] = React.useState("");
 	const [openDialog, setOpenDialog] = React.useState(false);
@@ -80,6 +83,7 @@ const InsuranceClassesView = observer( ({insurer}) => {
 	}
 	const handleCloseDialog = (event, value) => {
 		setOpenDialog(false);
+		setNewClassName("");
 	}
 	const handleAddInsuranceClass = (event) => {
 		insurer.addInsuranceClass(newClassName);
@@ -87,11 +91,12 @@ const InsuranceClassesView = observer( ({insurer}) => {
 	}
 
 	return <>
+		{isManager() && <Grid container justify="flex-end">
+			<Button color="primary" startIcon={<AddIcon/>} onClick={handleOpenDialog}>Bereich anlegen</Button></Grid>}
 		<Paper square>
-			<Tabs value={selectedTab} onChange={changeSelectedTab}>
+			<Tabs value={selectedTab} onChange={changeSelectedTab} variant={"scrollable"} scrollButtons={"auto"}>
 				{insurer.insuranceClasses.map(
-						(insuranceClass, i) => <Tab key={i} label={insuranceClass.className} {...a11yProps(i)} />)}
-				{<IconButton onClick={handleOpenDialog} color="inherit"><AddIcon/></IconButton>}
+						(insuranceClass, i) => <Tab key={i} label={insuranceClass.className} {...a11yProps(i)}/>)}
 			</Tabs>
 		</Paper>
 		{insurer.insuranceClasses.map((insuranceClass, i) =>
@@ -102,17 +107,29 @@ const InsuranceClassesView = observer( ({insurer}) => {
 					</List>
 					<List>
 						{insuranceClass.links.map((link, i) =>
-							<ContactLinkView key={i} link={link} onLinkDelete={handleLinkDelete}/>)}
+								<ContactLinkView key={i} link={link} onLinkDelete={handleLinkDelete}/>)}
 					</List>
-				</TabPanel>)}
-		{<Button variant="contained" color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt anlegen</Button>}
-		{<Button variant="contained" color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link anlegen</Button>}
+				</TabPanel>)
+		}
+		{isManager() && insurer.insuranceClasses.length > 0 &&
+		 <>
+			 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt
+				 anlegen</Button>
+			 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link
+				 anlegen</Button>
+		 </>
+		}
+		{insurer.insuranceClasses.length === 0 &&
+		 <Box textAlign="center" fontStyle="oblique" fontWeight="fontWeightLight">Legen Sie zuerst einen Bereich
+			 an...</Box>
+		}
 		<Dialog open={openDialog} onClose={handleCloseDialog}>
 			<DialogTitle>Bereich hinzufügen</DialogTitle>
 			<DialogContent>
 				<DialogContentText>Name bzw. Kürzel des neuen Bereichs/Sparte</DialogContentText>
 				<TextField autoFocus margin="dense" id="className" label="Bereich" type="text" fullWidth
-							  value={newClassName} onChange={e => setNewClassName(e.target.value)}/>
+							  value={newClassName} onChange={e => setNewClassName(e.target.value)}
+							  onKeyUp={(event) => {if (event.key === 'Enter') {handleAddInsuranceClass();}}}/>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleCloseDialog} name='cancel' color="secondary">Abbrechen</Button>

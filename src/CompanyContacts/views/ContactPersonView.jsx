@@ -11,6 +11,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import PhoneIcon from '@material-ui/icons/Phone';
 import PrintIcon from '@material-ui/icons/Print';
 import IconButton from "@material-ui/core/IconButton";
+import SmartphoneIcon from '@material-ui/icons/Smartphone';
 import Box from "@material-ui/core/Box";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ConfirmDialog from "./ConfirmDialog";
@@ -20,6 +21,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import {useRoles} from "../../hooks/useRoles";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -37,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ContactPersonView = observer(({person, onPersonDelete}) => {
 	const classes = useStyles();
+	const {isManager} = useRoles();
 	const [deleteConfirm, setDeleteConfirm] = React.useState(false);
 	const [contactEditor, openContactEditor] = React.useState(false);
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
@@ -49,8 +52,12 @@ const ContactPersonView = observer(({person, onPersonDelete}) => {
 			person[key] = values[key];
 		})
 	}
-	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
-	const handleCloseMenu = () => {setMenuAnchorEl(null);};
+	const handleOpenMenuClick = (event) => {
+		setMenuAnchorEl(event.currentTarget);
+	};
+	const handleCloseMenu = () => {
+		setMenuAnchorEl(null);
+	};
 
 	return <>
 		<ListItem>
@@ -69,6 +76,11 @@ const ContactPersonView = observer(({person, onPersonDelete}) => {
 								<Typography component="span" variant="body2"
 												color="textPrimary">{person.phone}</Typography>
 							</Box>}
+							{person.cellPhone && <Box flexGrow={1} component="span">
+								<SmartphoneIcon/>
+								<Typography component="span" variant="body2"
+												color="textPrimary">{person.cellPhone}</Typography>
+							</Box>}
 							{person.fax && <Box flexGrow={1} component="span">
 								<PrintIcon/>
 								<Typography component="span" variant="body2"
@@ -77,24 +89,37 @@ const ContactPersonView = observer(({person, onPersonDelete}) => {
 						</Box>
 					}
 			/>
-			<ListItemSecondaryAction>
-				<IconButton onClick={handleOpenMenuClick}><MoreVertIcon/></IconButton>
-				<Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu}>
-					<MenuItem onClick={() => {openContactEditor(true);handleCloseMenu()}}>
-						<ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
-						<ListItemText>Bearbeiten</ListItemText>
-					</MenuItem>
-					<MenuItem onClick={() => {setDeleteConfirm(true);handleCloseMenu()}}>
-						<ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
-						<ListItemText>Entfernen</ListItemText>
-					</MenuItem>
-				</Menu>
-			</ListItemSecondaryAction>
+			{isManager() &&
+			 <ListItemSecondaryAction>
+				 <IconButton onClick={handleOpenMenuClick}><MoreVertIcon/></IconButton>
+				 <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu}>
+					 <MenuItem onClick={() => {
+						 openContactEditor(true);
+						 handleCloseMenu()
+					 }}>
+						 <ListItemIcon><EditIcon fontSize="small"/></ListItemIcon>
+						 <ListItemText>Bearbeiten</ListItemText>
+					 </MenuItem>
+					 <MenuItem onClick={() => {
+						 setDeleteConfirm(true);
+						 handleCloseMenu()
+					 }}>
+						 <ListItemIcon><DeleteIcon fontSize="small"/></ListItemIcon>
+						 <ListItemText>Entfernen</ListItemText>
+					 </MenuItem>
+				 </Menu>
+			 </ListItemSecondaryAction>
+			}
 		</ListItem>
-		<ConfirmDialog title="Kontakt löschen?" open={deleteConfirm} setOpen={setDeleteConfirm} onConfirm={deletePerson}>
-			Möchten Sie die Kontaktdaten für {person.name} wirklisch löschen?
-		</ConfirmDialog>
-		<ContactPersonEditor person={person} open={contactEditor} setOpen={openContactEditor} onSave={savePerson}/>
+		{isManager() &&
+		 <>
+			 <ConfirmDialog title="Kontakt löschen?" open={deleteConfirm} setOpen={setDeleteConfirm}
+								 onConfirm={deletePerson}>
+				 Möchten Sie die Kontaktdaten für {person.name} wirklisch löschen?
+			 </ConfirmDialog>
+			 <ContactPersonEditor person={person} open={contactEditor} setOpen={openContactEditor} onSave={savePerson}/>
+		 </>
+		}
 	</>
 });
 

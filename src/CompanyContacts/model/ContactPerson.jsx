@@ -8,6 +8,8 @@ export class ContactPerson {
 
 	phone = ''
 
+	cellPhone = ''
+
 	mail = ''
 
 	fax = ''
@@ -17,6 +19,7 @@ export class ContactPerson {
 			topic: this.topic,
 			name: this.name,
 			phone: this.phone,
+			cellPhone: this.cellPhone,
 			mail: this.mail,
 			fax: this.fax,
 		}
@@ -26,6 +29,7 @@ export class ContactPerson {
 		person.topic = json['topic'] || ''
 		person.name = json['name'] || ''
 		person.phone = json['phone'] || ''
+		person.cellPhone = json['cellPhone'] || ''
 		person.mail = json['mail'] || ''
 		person.fax = json['fax'] || ''
 		return person
@@ -37,6 +41,7 @@ decorate(ContactPerson, {
 	topic: observable,
 	name: observable,
 	phone: observable,
+	cellPhone: observable,
 	mail: observable,
 	fax: observable,
 })

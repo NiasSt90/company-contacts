@@ -7,7 +7,6 @@ import InputBase from "@material-ui/core/InputBase";
 import Switch from "@material-ui/core/Switch";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import AddIcon from "@material-ui/icons/Add";
-import SaveIcon from "@material-ui/icons/Save";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
@@ -16,10 +15,10 @@ import AppBar from "@material-ui/core/AppBar";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import LockIcon from '@material-ui/icons/Lock';
 import MuiAlert from '@material-ui/lab/Alert';
-import {useKeycloak} from "@react-keycloak/web";
 import Snackbar from "@material-ui/core/Snackbar";
 import {observer} from "mobx-react";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import {useRoles} from "./hooks/useRoles";
 
 const useStyles = makeStyles(theme => ({
     grow: {
@@ -87,7 +86,7 @@ const useStyles = makeStyles(theme => ({
 
 const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
     const classes = useStyles();
-    const [keycloak, keycloakInitialized] = useKeycloak();
+    const {isManager, authenticated, login, logout} = useRoles();
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
@@ -114,15 +113,9 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
                 <div className={classes.sectionDesktop}>
                     <Switch checked={darkState} onChange={handleThemeChange}/>
                     <IconButton edge="end" onClick={() => model.load()} color="inherit"><RefreshIcon/></IconButton>
-                    {keycloak.hasResourceRole("Manager", "BVO_Contacts") &&
-                        <IconButton edge="end" onClick={() => model.add("NEU")} color="inherit"><AddIcon/></IconButton>
-                    }
-                    {!keycloak.authenticated &&
-                        <IconButton edge="end" onClick={() => keycloak.login()} color="inherit"><LockOpenIcon/></IconButton>
-                    }
-                    {keycloak.authenticated &&
-                        <IconButton edge="end" onClick={() => keycloak.logout()} color="inherit"><LockIcon/></IconButton>
-                    }
+                    {isManager() && <IconButton edge="end" onClick={() => model.add("NEU")} color="inherit"><AddIcon/></IconButton>}
+                    {!authenticated() && <IconButton edge="end" onClick={() => login()} color="inherit"><LockOpenIcon/></IconButton>}
+                    {authenticated() && <IconButton edge="end" onClick={() => logout()} color="inherit"><LockIcon/></IconButton>}
                 </div>
                 <div className={classes.sectionMobile}>
                     <IconButton onClick={handleMobileMenuOpen} color="inherit">

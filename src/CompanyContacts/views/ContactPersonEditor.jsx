@@ -12,6 +12,7 @@ const ContactPersonEditor = ({person, open, setOpen, onSave}) => {
 		topic: person.topic,
 		name: person.name,
 		phone: person.phone,
+		cellPhone: person.cellPhone,
 		mail: person.mail,
 		fax: person.fax
 	})
@@ -36,6 +37,7 @@ const ContactPersonEditor = ({person, open, setOpen, onSave}) => {
 			<TextField label="Topic" type="text" value={values.topic} name="topic" onChange={handleInputChange}/>
 			<TextField label="Name" type="text" value={values.name} name="name" onChange={handleInputChange}/>
 			<TextField label="Telefon" type="text" value={values.phone} name="phone" onChange={handleInputChange}/>
+			<TextField label="Mobil" type="text" value={values.cellPhone} name="cellPhone" onChange={handleInputChange}/>
 			<TextField label="Fax" type="text" value={values.fax} name="fax" onChange={handleInputChange}/>
 			<TextField label="E-Mail-Adresse" type="email" value={values.mail} name="mail" onChange={handleInputChange}/>
 		</DialogContent>

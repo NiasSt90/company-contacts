@@ -20,7 +20,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import CardActions from "@material-ui/core/CardActions";
 import InsurerEditor from "./InsurerEditor";
 import ConfirmDialog from "./ConfirmDialog";
-import {useKeycloak} from "@react-keycloak/web";
+import {useRoles} from "../../hooks/useRoles";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,14 +34,17 @@ const useStyles = makeStyles((theme) => ({
     },
     section3: {
         margin: theme.spacing(3, 1, 1),
+        '& pre': {
+            whiteSpace: "pre-wrap"
+        }
     },
 }));
 
 const InsurerView = observer(({model, insurer}) => {
     const classes = useStyles();
+    const { isManager } = useRoles();
     const [insurerEditor, openInsurerEditor] = React.useState(false);
     const [deleteInsurerConfirm, setShowDeleteInsurerConfirm] = React.useState(false);
-    const [keycloak, keycloakInitialized] = useKeycloak();
 
     const takeInsurerValues = (values) => {
         insurer.name = values["name"];
@@ -69,12 +72,13 @@ const InsurerView = observer(({model, insurer}) => {
                 <Typography component="pre" gutterBottom>{insurer.hints}</Typography>
             </div>
         </CardContent>
-        <CardActions disableSpacing>
-            <IconButton onClick={() => openInsurerEditor(true)}>
-                <EditIcon/>
-            </IconButton>
-        </CardActions>
-        <InsurerEditor insurer={insurer} open={insurerEditor} setOpen={openInsurerEditor} onSave={takeInsurerValues}/>
+        {isManager() && <>
+                <CardActions disableSpacing>
+                    <IconButton onClick={() => openInsurerEditor(true)}><EditIcon/></IconButton>
+                </CardActions>
+                <InsurerEditor insurer={insurer} open={insurerEditor} setOpen={openInsurerEditor} onSave={takeInsurerValues}/>
+            </>
+        }
     </Card>;
     return <div className={classes.root}>
         <ExpansionPanel>
@@ -88,16 +92,16 @@ const InsurerView = observer(({model, insurer}) => {
                 </Grid>
             </ExpansionPanelDetails>
             <Divider/>
-            <ExpansionPanelActions>
-                {keycloak.hasResourceRole("Manager", "BVO_Contacts") &&
-                <><IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
-                    <IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
-                    <ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm}
-                                   setOpen={setShowDeleteInsurerConfirm} onConfirm={() => model.remove(insurer)}>
-                        Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?
-                    </ConfirmDialog>
-                </>}
-            </ExpansionPanelActions>
+            {isManager() &&
+             <ExpansionPanelActions>
+                 <IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
+                 <IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
+                 <ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm}
+                                setOpen={setShowDeleteInsurerConfirm} onConfirm={() => model.remove(insurer)}>
+                     Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?
+                 </ConfirmDialog>
+             </ExpansionPanelActions>
+            }
         </ExpansionPanel>
     </div>
 });
