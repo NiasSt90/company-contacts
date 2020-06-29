@@ -13,16 +13,18 @@ export class InsuranceClass {
 
 	links = []
 
-	addPerson() {
-		this.contactPersons.push(new ContactPerson())
+	addPerson(person) {
+		if (this.contactPersons.indexOf(person) === -1) this.contactPersons.push(person);
+		return person;
 	}
 
 	removePerson(person) {
 		this.contactPersons = this.contactPersons.filter(p => p !== person);
 	}
 
-	addLink() {
-		this.links.push(new ContactLink())
+	addLink(link) {
+		if (this.links.indexOf(link) === -1) this.links.push(link);
+		return link;
 	}
 
 	removeLink(link) {

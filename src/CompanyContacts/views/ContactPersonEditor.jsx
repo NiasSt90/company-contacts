@@ -7,7 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
-const ContactPersonEditor = ({person, open, setOpen, onSave}) => {
+const ContactPersonEditor = ({person, open, onSave, onCancel}) => {
 	const [values, setValues] = React.useState({
 		topic: person.topic,
 		name: person.name,
@@ -20,15 +20,7 @@ const ContactPersonEditor = ({person, open, setOpen, onSave}) => {
 		const {name, value} = e.target
 		setValues({...values, [name]: value})
 	}
-	const handleCancel = () => {
-		setValues({...values, ...person})
-		setOpen(false);
-	};
-	const handleSave = () => {
-		onSave(values);
-		setOpen(false);
-	};
-	return <Dialog open={open} onClose={handleCancel}>
+	return <Dialog open={open} onClose={onCancel}>
 		<DialogTitle id="form-dialog-title">Kontaktdaten</DialogTitle>
 		<DialogContent>
 			<DialogContentText>
@@ -42,8 +34,8 @@ const ContactPersonEditor = ({person, open, setOpen, onSave}) => {
 			<TextField label="E-Mail-Adresse" type="email" value={values.mail} name="mail" onChange={handleInputChange}/>
 		</DialogContent>
 		<DialogActions>
-			<Button onClick={handleCancel} color="secondary" variant="contained">Abbrechen</Button>
-			<Button onClick={handleSave} color="primary" variant="contained">Speichern</Button>
+			<Button onClick={onCancel} color="secondary" variant="contained">Abbrechen</Button>
+			<Button onClick={() => onSave(values)} color="primary" variant="contained">Speichern</Button>
 		</DialogActions>
 	</Dialog>;
 };

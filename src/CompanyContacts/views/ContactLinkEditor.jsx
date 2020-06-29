@@ -7,7 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 
-const ContactLinkEditor = ({link, open, setOpen, onSave}) => {
+const ContactLinkEditor = ({link, open, onSave, onCancel}) => {
 	const [values, setValues] = React.useState({
 		name: link.name,
 		url: link.url,
@@ -17,15 +17,7 @@ const ContactLinkEditor = ({link, open, setOpen, onSave}) => {
 		const {name, value} = e.target
 		setValues({...values, [name]: value})
 	}
-	const handleCancel = () => {
-		setValues({...values, ...link})
-		setOpen(false);
-	};
-	const handleSave = () => {
-		onSave(values);
-		setOpen(false);
-	};
-	return <Dialog open={open} onClose={handleCancel}>
+	return <Dialog open={open} onClose={onCancel}>
 		<DialogTitle id="form-dialog-title">Externer Link</DialogTitle>
 		<DialogContent>
 			<DialogContentText>
@@ -36,8 +28,8 @@ const ContactLinkEditor = ({link, open, setOpen, onSave}) => {
 			<TextField label="Beschreibung" type="text" value={values.description} name="description" onChange={handleInputChange}/>
 		</DialogContent>
 		<DialogActions>
-			<Button onClick={handleCancel} color="secondary" variant="contained">Abbrechen</Button>
-			<Button onClick={handleSave} color="primary" variant="contained">Speichern</Button>
+			<Button onClick={onCancel} color="secondary" variant="contained">Abbrechen</Button>
+			<Button onClick={() => onSave(values)} color="primary" variant="contained">Speichern</Button>
 		</DialogActions>
 	</Dialog>;
 };

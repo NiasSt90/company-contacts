@@ -130,7 +130,7 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
             onClose={() => model.resetMessageState()}
             autoHideDuration={6000}>
             <MuiAlert elevation={6} variant="filled" onClose={() => model.resetMessageState()} severity={model.messageSeverity}>
-                {model.message ? model.message.toString() : "Unbekannter Fehler"}
+                {model.message ? model.message.toString() : ""}
             </MuiAlert>
         </Snackbar>
     </div>

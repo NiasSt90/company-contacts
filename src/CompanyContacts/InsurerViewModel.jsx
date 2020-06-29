@@ -30,14 +30,16 @@ class InsurerViewModel {
         this.message = errorMsg;
         this.messageSeverity = "error";
     }
-    onSuccess(msg) {
+    onSuccess(msg, severity= "success") {
         this.state = "done";
         this.message = msg;
-        this.messageSeverity = "success";
+        this.messageSeverity = severity;
     }
     onResults(result) {
         console.log(result);
         this.state = "done";
+        this.message = undefined;
+        this.messageSeverity = undefined;
         this.searchResultList = result.content.map(content => InsurerViewModel.mapToInsurer(content));
         this.currentPage = {page: result.number, size: result.size,
             totalElements:result.totalElements, totalPages: result.totalPages,
@@ -58,7 +60,7 @@ class InsurerViewModel {
         this.searchText = searchText;
         this.api.search(searchText, this.currentPage).then(
             action("fetchSuccess", result => {
-                this.onResults(result);
+                result.totalElements > 0 ? this.onResults(result) : this.onSuccess("Kein Treffer mit <" + searchText + ">", "info")
             }),
             action("fetchError", error => {
                 this.onError(error)
@@ -132,7 +134,7 @@ decorate(InsurerViewModel, {
     message: observable,
     currentPage: observable,
     messageState: computed,
-
+    resetMessageState: action,
     changeToPage: action,
     search: action,
     add: action,

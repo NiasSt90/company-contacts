@@ -31,20 +31,12 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const ContactLinkView = observer(({link, onLinkDelete}) => {
+const ContactLinkView = observer(({link, onEdit, onDelete}) => {
 	const classes = useStyles();
 	const [deleteConfirm, setDeleteConfirm] = React.useState(false);
-	const [linkEditor, openLinkEditor] = React.useState(false);
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
 
-	const deleteLink = (event) => {
-		onLinkDelete(link);
-	}
-	const saveLink = (values) => {
-		Object.keys(values).forEach(key => {
-			link[key] = values[key];
-		})
-	}
+	const deleteLink = () => {onDelete(link);}
 	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
 	const handleCloseMenu = () => {setMenuAnchorEl(null);};
 
@@ -59,7 +51,7 @@ const ContactLinkView = observer(({link, onLinkDelete}) => {
 			<ListItemSecondaryAction>
 				<IconButton onClick={handleOpenMenuClick}><MoreVertIcon/></IconButton>
 				<Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu}>
-					<MenuItem onClick={() => {openLinkEditor(true);handleCloseMenu()}}>
+					<MenuItem onClick={() => {onEdit(link);handleCloseMenu()}}>
 						<ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
 						<ListItemText>Bearbeiten</ListItemText>
 					</MenuItem>
@@ -73,7 +65,6 @@ const ContactLinkView = observer(({link, onLinkDelete}) => {
 		<ConfirmDialog title="Link löschen?" open={deleteConfirm} setOpen={setDeleteConfirm} onConfirm={deleteLink}>
 			Möchten Sie den Link {link.name} wirklisch löschen?
 		</ConfirmDialog>
-		<ContactLinkEditor link={link} open={linkEditor} setOpen={openLinkEditor} onSave={saveLink}/>
 	</>
 });
 

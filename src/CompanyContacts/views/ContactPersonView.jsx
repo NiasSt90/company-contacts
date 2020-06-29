@@ -37,27 +37,15 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const ContactPersonView = observer(({person, onPersonDelete}) => {
+const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 	const classes = useStyles();
 	const {isManager} = useRoles();
 	const [deleteConfirm, setDeleteConfirm] = React.useState(false);
-	const [contactEditor, openContactEditor] = React.useState(false);
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
 
-	const deletePerson = (event) => {
-		onPersonDelete(person);
-	}
-	const savePerson = (values) => {
-		Object.keys(values).forEach(key => {
-			person[key] = values[key];
-		})
-	}
-	const handleOpenMenuClick = (event) => {
-		setMenuAnchorEl(event.currentTarget);
-	};
-	const handleCloseMenu = () => {
-		setMenuAnchorEl(null);
-	};
+	const deletePerson = () => {onDelete(person);}
+	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
+	const handleCloseMenu = () => {setMenuAnchorEl(null);};
 
 	return <>
 		<ListItem>
@@ -94,7 +82,7 @@ const ContactPersonView = observer(({person, onPersonDelete}) => {
 				 <IconButton onClick={handleOpenMenuClick}><MoreVertIcon/></IconButton>
 				 <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu}>
 					 <MenuItem onClick={() => {
-						 openContactEditor(true);
+						 onEdit(person);
 						 handleCloseMenu()
 					 }}>
 						 <ListItemIcon><EditIcon fontSize="small"/></ListItemIcon>
@@ -117,7 +105,6 @@ const ContactPersonView = observer(({person, onPersonDelete}) => {
 								 onConfirm={deletePerson}>
 				 Möchten Sie die Kontaktdaten für {person.name} wirklisch löschen?
 			 </ConfirmDialog>
-			 <ContactPersonEditor person={person} open={contactEditor} setOpen={openContactEditor} onSave={savePerson}/>
 		 </>
 		}
 	</>
