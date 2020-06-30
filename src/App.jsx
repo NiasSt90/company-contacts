@@ -39,6 +39,15 @@ const App = observer( () =>  {
 			type: palletType,
 			primary: {main: mainPrimaryColor},
 			secondary: {main: mainSecondaryColor}
+		},
+		overrides: {
+			MuiFab: {
+				root: {
+					position: "fixed",
+					bottom: 16,
+					right: 16,
+				}
+			}
 		}
 	});
 	const onToken = (tokens) => {
@@ -55,6 +64,7 @@ const App = observer( () =>  {
 			case "onTokenExpired":
 			case "onAuthLogout":
 				break;
+			default:
 		}
 	}
 	return (

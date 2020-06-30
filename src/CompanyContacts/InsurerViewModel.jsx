@@ -68,12 +68,11 @@ class InsurerViewModel {
     }
 
     //	@action
-    add(name) {
+    add(newInsurer) {
         this.onStart();
-        const newInsurer = new Insurer(name)
         this.api.post(newInsurer).then(
             action("addSuccess", result => {
-                this.onSuccess("neuen Versicherer erstellt");
+                this.onSuccess("neuen Versicherer " + newInsurer.name + " angelegt.");
                 newInsurer.id = result;
                 this.searchResultList.push(newInsurer);
             }),
@@ -97,6 +96,10 @@ class InsurerViewModel {
 
 //	@action
     save(insurer) {
+        if (insurer.id === undefined) {
+            this.add(insurer);
+            return;
+        }
         this.onStart();
         this.api.put(insurer.id, insurer).then(
             action("saveSuccess", result => {
@@ -128,12 +131,13 @@ class InsurerViewModel {
 }
 
 decorate(InsurerViewModel, {
-    insurerList: observable,
     searchResultList: observable,
     state: observable,
     message: observable,
     currentPage: observable,
+
     messageState: computed,
+
     resetMessageState: action,
     changeToPage: action,
     search: action,

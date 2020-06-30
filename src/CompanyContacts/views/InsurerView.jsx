@@ -18,7 +18,6 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {makeStyles} from "@material-ui/core/styles";
 import CardActions from "@material-ui/core/CardActions";
-import InsurerEditor from "./InsurerEditor";
 import ConfirmDialog from "./ConfirmDialog";
 import {useRoles} from "../../hooks/useRoles";
 
@@ -40,21 +39,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const InsurerView = observer(({model, insurer}) => {
+const InsurerView = observer(({model, insurer, onEdit, onSave, onDelete}) => {
     const classes = useStyles();
     const { isManager } = useRoles();
-    const [insurerEditor, openInsurerEditor] = React.useState(false);
     const [deleteInsurerConfirm, setShowDeleteInsurerConfirm] = React.useState(false);
 
-    const takeInsurerValues = (values) => {
-        insurer.name = values["name"];
-        insurer.address.street = values["street"];
-        insurer.address.number = values["number"];
-        insurer.address.zipCode = values["zipCode"];
-        insurer.address.city = values["city"];
-        insurer.hints = values["hints"];
-        insurer.imgDataURL = values["imgDataURL"];
-    }
     const view = <Card>
         <CardContent>
             <div className={classes.section1}>
@@ -72,12 +61,10 @@ const InsurerView = observer(({model, insurer}) => {
                 <Typography component="pre" gutterBottom>{insurer.hints}</Typography>
             </div>
         </CardContent>
-        {isManager() && <>
-                <CardActions disableSpacing>
-                    <IconButton onClick={() => openInsurerEditor(true)}><EditIcon/></IconButton>
-                </CardActions>
-                <InsurerEditor insurer={insurer} open={insurerEditor} setOpen={openInsurerEditor} onSave={takeInsurerValues}/>
-            </>
+        {isManager() &&
+            <CardActions disableSpacing>
+                <IconButton onClick={() => onEdit(insurer)}><EditIcon/></IconButton>
+            </CardActions>
         }
     </Card>;
     return <div className={classes.root}>
@@ -94,10 +81,10 @@ const InsurerView = observer(({model, insurer}) => {
             <Divider/>
             {isManager() &&
              <ExpansionPanelActions>
-                 <IconButton color="primary" onClick={() => model.save(insurer)}><SaveIcon/></IconButton>
+                 <IconButton color="primary" onClick={() => onSave(insurer)}><SaveIcon/></IconButton>
                  <IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
                  <ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm}
-                                setOpen={setShowDeleteInsurerConfirm} onConfirm={() => model.remove(insurer)}>
+                                setOpen={setShowDeleteInsurerConfirm} onConfirm={() => onDelete(insurer)}>
                      Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?
                  </ConfirmDialog>
              </ExpansionPanelActions>

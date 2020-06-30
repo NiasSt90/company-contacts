@@ -13,7 +13,6 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormLabel from "@material-ui/core/FormLabel";
 import InputBase from "@material-ui/core/InputBase";
 import {makeStyles} from "@material-ui/core/styles";
-import Input from "@material-ui/core/Input";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const InsurerEditor = ({insurer, open, setOpen, onSave}) => {
+const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 	const classes = useStyles();
 	const [values, setValues] = React.useState({
 		name: insurer.name,
@@ -43,17 +42,11 @@ const InsurerEditor = ({insurer, open, setOpen, onSave}) => {
 		const {name, value} = e.target
 		setValues({...values, [name]: value})
 	}
+	const handleSave = () => {
+		onSave(values);
+	};
 	const handleCancel = () => {
-		setValues({
-			...values,
-			name: insurer.name,
-			street: insurer.address.street,
-			number: insurer.address.number,
-			zipCode: insurer.address.zipCode,
-			city: insurer.address.city,
-			hints: insurer.hints,
-		})//TODO: nice way to reset back to original values?
-		setOpen(false);
+		onCancel();
 	};
 	const handleFileUpload = event => {
 		console.log(event.target.files[0]);
@@ -74,10 +67,6 @@ const InsurerEditor = ({insurer, open, setOpen, onSave}) => {
 			setValues({...values, imgURL: objectURL, imgDataURL: dataUrl});
 		})();
 	}
-	const handleSave = () => {
-		onSave(values);
-		setOpen(false);
-	};
 	return <Dialog open={open} onClose={handleCancel}>
 		<DialogTitle id="InsurerEditorDialog">Versicherer</DialogTitle>
 		<DialogContent className={classes.dialogContent}>
@@ -87,7 +76,7 @@ const InsurerEditor = ({insurer, open, setOpen, onSave}) => {
 			<FormGroup row className={classes.formGroup}>
 				<FormControl>
 					<FormLabel>Icon</FormLabel>
-					{values.imgDataURL && <img src={values.imgDataURL ? values.imgDataURL : values.imgURL} width="128px" />}
+					{values.imgDataURL && <img alt="icon" src={values.imgDataURL ? values.imgDataURL : values.imgURL} width="128px" />}
 					<InputBase onChange={handleFileUpload} type="file" accept="image/*"  placeholder="Versicherer Icon"/>
 					<FormHelperText>Versicherer - Icon</FormHelperText>
 				</FormControl>

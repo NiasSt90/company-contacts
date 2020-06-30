@@ -1,4 +1,4 @@
-import {observable, computed, decorate} from 'mobx'
+import {decorate, observable} from 'mobx'
 import {Address} from "./Address";
 import {InsuranceClass} from "./InsuranceClass";
 

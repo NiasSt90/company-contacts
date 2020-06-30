@@ -1,5 +1,3 @@
-import {set} from "mobx";
-
 const settings = {
 	REST_API_CONTACTS: window.env.REST_API_CONTACTS,
 	KEYCLOAK_URL: window.env.KEYCLOAK_URL,

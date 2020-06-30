@@ -6,7 +6,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import Switch from "@material-ui/core/Switch";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import AddIcon from "@material-ui/icons/Add";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
@@ -86,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 
 const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
     const classes = useStyles();
-    const {isManager, authenticated, login, logout} = useRoles();
+    const {authenticated, login, logout} = useRoles();
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
@@ -113,7 +112,6 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
                 <div className={classes.sectionDesktop}>
                     <Switch checked={darkState} onChange={handleThemeChange}/>
                     <IconButton edge="end" onClick={() => model.load()} color="inherit"><RefreshIcon/></IconButton>
-                    {isManager() && <IconButton edge="end" onClick={() => model.add("NEU")} color="inherit"><AddIcon/></IconButton>}
                     {!authenticated() && <IconButton edge="end" onClick={() => login()} color="inherit"><LockOpenIcon/></IconButton>}
                     {authenticated() && <IconButton edge="end" onClick={() => logout()} color="inherit"><LockIcon/></IconButton>}
                 </div>
