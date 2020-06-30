@@ -1,4 +1,4 @@
-import {action, computed, decorate, observable, runInAction} from 'mobx'
+import {action, computed, decorate, observable} from 'mobx'
 import {Insurer} from "./model/Insurer";
 import useFetch from "../hooks/useFetch";
 

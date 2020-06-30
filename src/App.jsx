@@ -15,6 +15,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import {KeycloakProvider} from "@react-keycloak/web";
 import MuiAlert from "@material-ui/lab/Alert";
 import settings from "./settings";
+import {useStores} from "./hooks/useStores";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -22,11 +23,9 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-// create a viewModel singleton
-const model = new InsurerViewModel(settings.REST_API_CONTACTS)
-
 const App = observer( () =>  {
 	const classes = useStyles();
+	const { authStore, viewmodel } = useStores();
 	const [darkState, setDarkState] = useState(false);
 	const handleThemeChange = () => {
 		setDarkState(!darkState);
@@ -51,12 +50,13 @@ const App = observer( () =>  {
 		}
 	});
 	const onToken = (tokens) => {
+		authStore.token = tokens.token;
 		sessionStorage.setItem('kc-token', tokens.token);
 	}
 	const onKeycloakEvent = (event, error) => {
 		console.log('onKeycloakEvent', event, error)
 		switch (event) {
-			case "onAuthSuccess": model.load();break;
+			case "onAuthSuccess": viewmodel.load();break;
 			case "onReady":
 			case "onAuthError":
 			case "onAuthRefreshSuccess":
@@ -76,8 +76,8 @@ const App = observer( () =>  {
 				<div className={classes.root}>
 					<CssBaseline/>
 					<div className="App">
-						<MyAppBar model={model} darkState={darkState} handleThemeChange={handleThemeChange}/>
-						<InsurerListView model={model}/>
+						<MyAppBar model={viewmodel} darkState={darkState} handleThemeChange={handleThemeChange}/>
+						<InsurerListView model={viewmodel}/>
 						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
 							Diese Anwendung ist als technical-Preview zu betrachten.<br/>
 							Aktuell darf jeder alles Anlegen/Bearbeiten/Löschen....
