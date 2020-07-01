@@ -13,8 +13,8 @@ class InsurerViewModel {
 
     currentPage = {page: 0, size: 10, totalElements: 0, totalPages: 0, first: true, last: true}
 
-    constructor(baseUrl) {
-        this.api = useFetch(baseUrl);
+    constructor(baseUrl, authTokenStore) {
+        this.api = useFetch(baseUrl, authTokenStore);
     }
     get messageState() {
         return this.message !== undefined;

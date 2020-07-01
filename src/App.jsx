@@ -51,13 +51,12 @@ const App = observer( () =>  {
 	});
 	const onToken = (tokens) => {
 		authStore.token = tokens.token;
-		sessionStorage.setItem('kc-token', tokens.token);
 	}
 	const onKeycloakEvent = (event, error) => {
-		console.log('onKeycloakEvent', event, error)
+		console.log('onKeycloakEvent: ', event, error)
 		switch (event) {
-			case "onAuthSuccess": viewmodel.load();break;
-			case "onReady":
+			case "onReady":viewmodel.load();break;
+			case "onAuthSuccess":
 			case "onAuthError":
 			case "onAuthRefreshSuccess":
 			case "onAuthRefreshError":

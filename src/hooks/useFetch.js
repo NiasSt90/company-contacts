@@ -1,9 +1,10 @@
-const useFetch = (endpoint) => {
+const useFetch = (endpoint, authTokenStore) => {
+    const tokenStore = authTokenStore;
     const defaultHeader = () => {
         return {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + sessionStorage.getItem("kc-token"),
+            "Authorization": "Bearer " + tokenStore.token,
         };
     }
     const customFetch = (
