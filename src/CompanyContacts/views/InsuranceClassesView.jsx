@@ -18,11 +18,13 @@ import {observer} from "mobx-react";
 import List from "@material-ui/core/List";
 import ContactLinkView from "./ContactLinkView";
 import {useRoles} from "../../hooks/useRoles";
-import Grid from "@material-ui/core/Grid";
 import ContactPersonEditor from "./ContactPersonEditor";
 import {ContactPerson} from "../model/ContactPerson";
 import ContactLinkEditor from "./ContactLinkEditor";
 import {ContactLink} from "../model/ContactLink";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
 
 
 function TabPanel(props) {
@@ -56,8 +58,12 @@ const InsuranceClassesView = observer(({insurer}) => {
 
 	//PERSON
 	const [selectedPerson, setSelectedPerson] = React.useState(undefined);
-	const handleAddPerson = () => {setSelectedPerson(new ContactPerson())}
-	const handleSelectPerson = (person) => {setSelectedPerson(person)}
+	const handleAddPerson = () => {
+		setSelectedPerson(new ContactPerson())
+	}
+	const handleSelectPerson = (person) => {
+		setSelectedPerson(person)
+	}
 	const handleSavePerson = (values) => {
 		Object.keys(values).forEach(key => {
 			selectedPerson[key] = values[key];
@@ -74,8 +80,12 @@ const InsuranceClassesView = observer(({insurer}) => {
 
 	//LINKS
 	const [selectedLink, setSelectedLink] = React.useState(undefined);
-	const handleAddLink = () => {setSelectedLink(new ContactLink())}
-	const handleSelectLink = (link) => {setSelectedLink(link)}
+	const handleAddLink = () => {
+		setSelectedLink(new ContactLink())
+	}
+	const handleSelectLink = (link) => {
+		setSelectedLink(link)
+	}
 	const handleSaveLink = (values) => {
 		Object.keys(values).forEach(key => {
 			selectedLink[key] = values[key];
@@ -102,58 +112,70 @@ const InsuranceClassesView = observer(({insurer}) => {
 		handleCloseDialog();
 	}
 
-	return <>
-		{isManager() && <Grid container justify="flex-end">
-			<Button color="primary" startIcon={<AddIcon/>} onClick={handleOpenDialog}>Bereich</Button></Grid>}
-		<Paper square>
-			<Tabs value={selectedTab} onChange={changeSelectedTab} variant={"scrollable"} scrollButtons={"auto"}>
-				{insurer.insuranceClasses.map(
-						(insuranceClass, i) => <Tab key={i} label={insuranceClass.className} />)}
-			</Tabs>
-		</Paper>
-		{insurer.insuranceClasses.map((insuranceClass, i) =>
-				<TabPanel value={selectedTab} key={i} index={i}>
-					<List>
-						{insuranceClass.contactPersons.map((person, i) =>
-								<ContactPersonView key={i}  person={person} onEdit={handleSelectPerson} onDelete={handlePersonDelete}/>)}
-					</List>
-					<List>
-						{insuranceClass.links.map((link, i) =>
-								<ContactLinkView key={i} link={link} onEdit={handleSelectLink} onDelete={handleLinkDelete}/>)}
-					</List>
-				</TabPanel>)
+	return <Card style={{height:"100%"}} elevation={2}>
+		<CardContent>
+			<Paper square>
+				<Tabs value={selectedTab} onChange={changeSelectedTab} variant={"scrollable"} scrollButtons={"auto"}>
+					{insurer.insuranceClasses.map(
+							(insuranceClass, i) => <Tab key={i} label={insuranceClass.className}/>)}
+				</Tabs>
+			</Paper>
+			{insurer.insuranceClasses.map((insuranceClass, i) =>
+					<TabPanel value={selectedTab} key={i} index={i}>
+						<List>
+							{insuranceClass.contactPersons.map((person, i) =>
+									<ContactPersonView key={i} person={person} onEdit={handleSelectPerson}
+															 onDelete={handlePersonDelete}/>)}
+						</List>
+						<List>
+							{insuranceClass.links.map((link, i) =>
+									<ContactLinkView key={i} link={link} onEdit={handleSelectLink}
+														  onDelete={handleLinkDelete}/>)}
+						</List>
+					</TabPanel>)
+			}
+			{insurer.insuranceClasses.length === 0 &&
+			 <Box textAlign="center" fontStyle="oblique" fontWeight="fontWeightLight">Legen Sie zuerst einen Bereich
+				 an...</Box>
+			}
+		</CardContent>
+		{isManager() && <>
+			<CardActions>
+				<Button color="primary" startIcon={<AddIcon/>} onClick={handleOpenDialog}>Bereich</Button>
+				{selectedPerson !== undefined &&
+				 <ContactPersonEditor open person={selectedPerson}
+											 onSave={handleSavePerson} onCancel={() => handleSelectPerson(undefined)}/>
+				}
+				{selectedLink !== undefined &&
+				 <ContactLinkEditor open link={selectedLink}
+										  onSave={handleSaveLink} onCancel={() => handleSelectLink(undefined)}/>
+				}
+				{insurer.insuranceClasses.length > 0 &&
+				 <>
+					 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt</Button>
+					 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link</Button>
+				 </>
+				}
+			</CardActions>
+			<Dialog open={openDialog} onClose={handleCloseDialog}>
+				<DialogTitle>Bereich hinzufügen</DialogTitle>
+				<DialogContent>
+					<DialogContentText>Name bzw. Kürzel des neuen Bereichs/Sparte</DialogContentText>
+					<TextField autoFocus margin="dense" id="className" label="Bereich" type="text" fullWidth
+								  value={newClassName} onChange={e => setNewClassName(e.target.value)}
+								  onKeyUp={(event) => {
+									  if (event.key === 'Enter') {
+										  handleAddInsuranceClass();
+									  }
+								  }}/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} name='cancel' color="secondary">Abbrechen</Button>
+					<Button onClick={handleAddInsuranceClass} name='add' color="primary">Hinzufügen</Button>
+				</DialogActions>
+			</Dialog>
+		</>
 		}
-		{isManager() && selectedPerson !== undefined &&
-			<ContactPersonEditor open  person={selectedPerson}
-								 onSave={handleSavePerson} onCancel={() => handleSelectPerson(undefined)}/>
-		}
-		{isManager() && selectedLink !== undefined &&
-			<ContactLinkEditor open link={selectedLink}
-						   onSave={handleSaveLink} onCancel={() => handleSelectLink(undefined)}/>
-		}
-		{isManager() && insurer.insuranceClasses.length > 0 &&
-		 <>
-			 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt</Button>
-			 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link</Button>
-		 </>
-		}
-		{insurer.insuranceClasses.length === 0 &&
-		 <Box textAlign="center" fontStyle="oblique" fontWeight="fontWeightLight">Legen Sie zuerst einen Bereich
-			 an...</Box>
-		}
-		<Dialog open={openDialog} onClose={handleCloseDialog}>
-			<DialogTitle>Bereich hinzufügen</DialogTitle>
-			<DialogContent>
-				<DialogContentText>Name bzw. Kürzel des neuen Bereichs/Sparte</DialogContentText>
-				<TextField autoFocus margin="dense" id="className" label="Bereich" type="text" fullWidth
-							  value={newClassName} onChange={e => setNewClassName(e.target.value)}
-							  onKeyUp={(event) => {if (event.key === 'Enter') {handleAddInsuranceClass();}}}/>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleCloseDialog} name='cancel' color="secondary">Abbrechen</Button>
-				<Button onClick={handleAddInsuranceClass} name='add' color="primary">Hinzufügen</Button>
-			</DialogActions>
-		</Dialog>
-	</>
+	</Card>
 });
 export default InsuranceClassesView;

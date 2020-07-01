@@ -25,14 +25,10 @@ const useStyles = makeStyles(theme => ({
 
 const App = observer( () =>  {
 	const classes = useStyles();
-	const { authStore, viewmodel } = useStores();
-	const [darkState, setDarkState] = useState(false);
-	const handleThemeChange = () => {
-		setDarkState(!darkState);
-	};
-	const palletType = darkState ? "dark" : "light";
-	const mainPrimaryColor = darkState ? orange[500] : blue[500];
-	const mainSecondaryColor = darkState ? deepOrange[900] : red[500];
+	const { authStore, viewmodel, themeStore } = useStores();
+	const palletType = themeStore.darkState ? "dark" : "light";
+	const mainPrimaryColor = themeStore.darkState ? orange[500] : blue[500];
+	const mainSecondaryColor = themeStore.darkState ? deepOrange[900] : red[500];
 	const selectedTheme = createMuiTheme({
 		palette: {
 			type: palletType,
@@ -51,12 +47,17 @@ const App = observer( () =>  {
 	});
 	const onToken = (tokens) => {
 		authStore.token = tokens.token;
+		authStore.keycloak = keycloak;
 	}
 	const onKeycloakEvent = (event, error) => {
 		console.log('onKeycloakEvent: ', event, error)
 		switch (event) {
-			case "onReady":viewmodel.load();break;
+			case "onReady":
+				viewmodel.load();
+				authStore.init();
+				break;
 			case "onAuthSuccess":
+			break;
 			case "onAuthError":
 			case "onAuthRefreshSuccess":
 			case "onAuthRefreshError":
@@ -75,8 +76,9 @@ const App = observer( () =>  {
 				<div className={classes.root}>
 					<CssBaseline/>
 					<div className="App">
-						<MyAppBar model={viewmodel} darkState={darkState} handleThemeChange={handleThemeChange}/>
+						<MyAppBar model={viewmodel}/>
 						<InsurerListView model={viewmodel}/>
+
 						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
 							Diese Anwendung ist als technical-Preview zu betrachten.<br/>
 							Aktuell darf jeder alles Anlegen/Bearbeiten/Löschen....

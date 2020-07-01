@@ -20,6 +20,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import CardActions from "@material-ui/core/CardActions";
 import ConfirmDialog from "./ConfirmDialog";
 import {useRoles} from "../../hooks/useRoles";
+import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -44,38 +45,41 @@ const InsurerView = observer(({model, insurer, onEdit, onSave, onDelete}) => {
     const { isManager } = useRoles();
     const [deleteInsurerConfirm, setShowDeleteInsurerConfirm] = React.useState(false);
 
-    const view = <Card>
-        <CardContent>
-            <div className={classes.section1}>
-                {insurer.imgDataURL && <Typography component="img" src={insurer.imgDataURL}/>}
-                {!insurer.imgDataURL && <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>}
-            </div>
-            <div className={classes.section2}>
-                <Typography variant="body2" color="textSecondary" component="p">
-                    <strong>{insurer.address.street} {insurer.address.number}</strong><br/>
-                    <strong>{insurer.address.zipCode} {insurer.address.city}</strong><br/>
-                </Typography>
-            </div>
-            <Divider variant="middle"/>
-            <div className={classes.section3}>
-                <Typography component="pre" gutterBottom>{insurer.hints}</Typography>
-            </div>
-        </CardContent>
-        {isManager() &&
-            <CardActions disableSpacing>
-                <IconButton onClick={() => onEdit(insurer)}><EditIcon/></IconButton>
-            </CardActions>
-        }
-    </Card>;
     return <div className={classes.root}>
         <ExpansionPanel>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
                 <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <Grid container>
-                    <Grid item xs={12} md={6}>{view}</Grid>
-                    <Grid item xs={12} md={6}><InsuranceClassesView insurer={insurer}/></Grid>
+                <Grid container spacing={2} alignItems="stretch" justify="center">
+                    <Grid item xs={12} md={6}>
+                        <Card elevation={2}>
+                            <CardContent>
+                                <div className={classes.section1}>
+                                    {insurer.imgDataURL && <Typography component="img" src={insurer.imgDataURL}/>}
+                                    {!insurer.imgDataURL && <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>}
+                                </div>
+                                <div className={classes.section2}>
+                                    <Typography variant="body2" color="textSecondary" component="p">
+                                        <strong>{insurer.address.street} {insurer.address.number}</strong><br/>
+                                        <strong>{insurer.address.zipCode} {insurer.address.city}</strong><br/>
+                                    </Typography>
+                                </div>
+                                <Divider variant="middle"/>
+                                <div className={classes.section3}>
+                                    <Typography component="pre" gutterBottom>{insurer.hints}</Typography>
+                                </div>
+                            </CardContent>
+                            {isManager() &&
+                             <CardActions disableSpacing>
+                                 <IconButton onClick={() => onEdit(insurer)}><EditIcon/></IconButton>
+                             </CardActions>
+                            }
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <InsuranceClassesView insurer={insurer}/>
+                    </Grid>
                 </Grid>
             </ExpansionPanelDetails>
             <Divider/>

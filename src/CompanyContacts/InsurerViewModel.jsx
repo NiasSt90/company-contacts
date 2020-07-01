@@ -15,6 +15,7 @@ class InsurerViewModel {
 
     constructor(baseUrl, authTokenStore) {
         this.api = useFetch(baseUrl, authTokenStore);
+        this.authTokenStore = authTokenStore;
     }
     get messageState() {
         return this.message !== undefined;
@@ -138,7 +139,6 @@ decorate(InsurerViewModel, {
 
     messageState: computed,
 
-    resetMessageState: action,
     changeToPage: action,
     search: action,
     add: action,
