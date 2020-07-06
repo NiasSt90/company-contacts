@@ -50,7 +50,8 @@ const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 	return <>
 		<ListItem>
 			<ListItemAvatar>
-				<Avatar>{person.name.charAt(0)}</Avatar></ListItemAvatar>
+				<Avatar>{person.name.charAt(0)}</Avatar>
+			</ListItemAvatar>
 			<ListItemText
 					primary={<Typography><strong>{person.topic}</strong> {person.name}</Typography>}
 					secondary={
@@ -103,7 +104,7 @@ const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 		 <>
 			 <ConfirmDialog title="Kontakt löschen?" open={deleteConfirm} setOpen={setDeleteConfirm}
 								 onConfirm={deletePerson}>
-				 Möchten Sie die Kontaktdaten für {person.name} wirklisch löschen?
+				 Möchten Sie die Kontaktdaten für {person.name} wirklich löschen?
 			 </ConfirmDialog>
 		 </>
 		}

@@ -46,7 +46,7 @@ const ContactLinkView = observer(({link, onEdit, onDelete}) => {
 			</ListItemSecondaryAction>
 		</ListItem>
 		<ConfirmDialog title="Link löschen?" open={deleteConfirm} setOpen={setDeleteConfirm} onConfirm={deleteLink}>
-			Möchten Sie den Link {link.name} wirklisch löschen?
+			Möchten Sie den Link {link.name} wirklich löschen?
 		</ConfirmDialog>
 	</>
 });

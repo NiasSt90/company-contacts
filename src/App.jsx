@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './App.css';
-import InsurerViewModel from "./CompanyContacts/InsurerViewModel";
 import InsurerListView from "./CompanyContacts/views/InsurerListView";
 import {createMuiTheme, ThemeProvider} from "@material-ui/core";
 import {blue, red} from "@material-ui/core/colors";
@@ -14,7 +13,6 @@ import keycloak from "./keycloak";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {KeycloakProvider} from "@react-keycloak/web";
 import MuiAlert from "@material-ui/lab/Alert";
-import settings from "./settings";
 import {useStores} from "./hooks/useStores";
 
 const useStyles = makeStyles(theme => ({
@@ -25,7 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const App = observer( () =>  {
 	const classes = useStyles();
-	const { authStore, viewmodel, themeStore } = useStores();
+	const { authStore, insurerModel, themeStore } = useStores();
 	const palletType = themeStore.darkState ? "dark" : "light";
 	const mainPrimaryColor = themeStore.darkState ? orange[500] : blue[500];
 	const mainSecondaryColor = themeStore.darkState ? deepOrange[900] : red[500];
@@ -53,7 +51,7 @@ const App = observer( () =>  {
 		console.log('onKeycloakEvent: ', event, error)
 		switch (event) {
 			case "onReady":
-				viewmodel.load();
+				insurerModel.load();
 				authStore.init();
 				break;
 			case "onAuthSuccess":
@@ -76,8 +74,8 @@ const App = observer( () =>  {
 				<div className={classes.root}>
 					<CssBaseline/>
 					<div className="App">
-						<MyAppBar model={viewmodel}/>
-						<InsurerListView model={viewmodel}/>
+						<MyAppBar model={insurerModel}/>
+						<InsurerListView model={insurerModel}/>
 
 						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
 							Diese Anwendung ist als technical-Preview zu betrachten.<br/>

@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
 
 const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
 	const classes = useStyles();
-	const {themeStore, authStore} = useStores();
+	const {themeStore, authStore, activityHandler } = useStores();
 	const {authenticated, login, logout} = useRoles();
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 	const handleMobileMenuOpen = (event) => {
@@ -135,14 +135,15 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
 				</div>
 			</Toolbar>
 		</AppBar>
-		{model.state === "pending" && <LinearProgress variant="indeterminate" color="secondary"/>}
+
+		{activityHandler.state === "pending" && <LinearProgress variant="indeterminate" color="secondary"/>}
 		<Snackbar
-				open={model.messageState}
-				onClose={() => model.resetMessageState()}
+				open={activityHandler.messageState}
+				onClose={() => activityHandler.resetMessageState()}
 				autoHideDuration={6000}>
-			<MuiAlert elevation={6} variant="filled" onClose={() => model.resetMessageState()}
-						 severity={model.messageSeverity}>
-				{model.message ? model.message.toString() : ""}
+			<MuiAlert elevation={6} variant="filled" onClose={() => activityHandler.resetMessageState()}
+						 severity={activityHandler.messageSeverity}>
+				{activityHandler.message ? activityHandler.message.toString() : ""}
 			</MuiAlert>
 		</Snackbar>
 	</div>

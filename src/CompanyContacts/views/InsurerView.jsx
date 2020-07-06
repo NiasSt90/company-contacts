@@ -20,7 +20,6 @@ import {makeStyles} from "@material-ui/core/styles";
 import CardActions from "@material-ui/core/CardActions";
 import ConfirmDialog from "./ConfirmDialog";
 import {useRoles} from "../../hooks/useRoles";
-import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const InsurerView = observer(({model, insurer, onEdit, onSave, onDelete}) => {
+const InsurerView = observer(({model, insurer, onEdit, onSave, onDelete, onUpload}) => {
     const classes = useStyles();
     const { isManager } = useRoles();
     const [deleteInsurerConfirm, setShowDeleteInsurerConfirm] = React.useState(false);
@@ -78,7 +77,7 @@ const InsurerView = observer(({model, insurer, onEdit, onSave, onDelete}) => {
                         </Card>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <InsuranceClassesView insurer={insurer}/>
+                        <InsuranceClassesView model={model} insurer={insurer}/>
                     </Grid>
                 </Grid>
             </ExpansionPanelDetails>
@@ -89,7 +88,7 @@ const InsurerView = observer(({model, insurer, onEdit, onSave, onDelete}) => {
                  <IconButton onClick={() => setShowDeleteInsurerConfirm(true)}><DeleteIcon/></IconButton>
                  <ConfirmDialog title="Versicherer löschen?" open={deleteInsurerConfirm}
                                 setOpen={setShowDeleteInsurerConfirm} onConfirm={() => onDelete(insurer)}>
-                     Möchten Sie den Versicherer für {insurer.name} wirklisch löschen?
+                     Möchten Sie den Versicherer für {insurer.name} wirklich löschen?
                  </ConfirmDialog>
              </ExpansionPanelActions>
             }

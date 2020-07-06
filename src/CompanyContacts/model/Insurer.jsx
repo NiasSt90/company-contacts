@@ -1,6 +1,7 @@
 import {decorate, observable} from 'mobx'
 import {Address} from "./Address";
 import {InsuranceClass} from "./InsuranceClass";
+import {FileDocument} from "./FileDocument";
 
 export class Insurer {
 
@@ -18,6 +19,8 @@ export class Insurer {
 
     imgDataURL
 
+    documents = []
+
     constructor(name) {
         this.name = name;
     }
@@ -32,6 +35,14 @@ export class Insurer {
         this.insuranceClasses = this.insuranceClasses.filter(x => x !== clazz);
     }
 
+    addDocument(document) {
+        this.documents.push(document);
+    }
+
+    delDocument(document) {
+        this.documents = this.documents.filter(x => x !== document);
+    }
+
 
     // this two methods will serialize and deserialize the insurer
     // to keep the example clean I have done them, but you should consider using
@@ -44,6 +55,7 @@ export class Insurer {
             imgDataURL: this.imgDataURL,
             address: this.address.serialize(),
             insuranceClasses: this.insuranceClasses.map(insuranceClass => insuranceClass.serialize()),
+            documents: this.documents.map(doc => doc.serialize()),
         }
     }
     static deserialize(json){
@@ -54,6 +66,7 @@ export class Insurer {
         insurer.imgDataURL = json['imgDataURL'] || ''
         insurer.address = Address.deserialize(json['address'])
         insurer.insuranceClasses = json['insuranceClasses'] ? json['insuranceClasses'].map(insuranceClass => InsuranceClass.deserialize(insuranceClass)) : []
+        insurer.documents = json['documents'] ? json['documents'].map(doc => FileDocument.deserialize(doc)) : []
         return insurer
     }
 }
@@ -62,4 +75,5 @@ decorate(Insurer, {
     name: observable,
     hints: observable,
     insuranceClasses: observable,
+    documents: observable,
 })

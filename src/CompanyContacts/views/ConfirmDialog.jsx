@@ -6,7 +6,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 
 const ConfirmDialog = ({title, children, open, setOpen, onConfirm}) => {
-	return <Dialog open={open} onClose={() => setOpen(false)} aria-labelledby="confirm-dialog">
+	return <Dialog open={open} onClose={() => setOpen(false)}>
 		<DialogTitle id="confirm-dialog">{title}</DialogTitle>
 		<DialogContent>{children}</DialogContent>
 		<DialogActions>

@@ -4,43 +4,17 @@ import useFetch from "../hooks/useFetch";
 
 class InsurerViewModel {
 
-    /*@observable*/
     searchResultList = []
-
-    state = "pending" // "pending" / "done" / "error"
-    message = undefined
-    messageSeverity = "success"
 
     currentPage = {page: 0, size: 10, totalElements: 0, totalPages: 0, first: true, last: true}
 
-    constructor(baseUrl, authTokenStore) {
-        this.api = useFetch(baseUrl, authTokenStore);
-        this.authTokenStore = authTokenStore;
-    }
-    get messageState() {
-        return this.message !== undefined;
-    }
-    resetMessageState() {
-        this.message = undefined;
-    }
-    onStart() {
-        this.state = "pending";
-    }
-    onError(errorMsg) {
-        this.state = "error";
-        this.message = errorMsg;
-        this.messageSeverity = "error";
-    }
-    onSuccess(msg, severity= "success") {
-        this.state = "done";
-        this.message = msg;
-        this.messageSeverity = severity;
+    constructor(baseUrl, authTokenStore, activityHandler) {
+        this.contactsApi = useFetch(baseUrl + "/contact", authTokenStore);
+        this.activityHandler = activityHandler;
     }
     onResults(result) {
         console.log(result);
-        this.state = "done";
-        this.message = undefined;
-        this.messageSeverity = undefined;
+        this.activityHandler.onSuccess();
         this.searchResultList = result.content.map(content => InsurerViewModel.mapToInsurer(content));
         this.currentPage = {page: result.number, size: result.size,
             totalElements:result.totalElements, totalPages: result.totalPages,
@@ -57,41 +31,41 @@ class InsurerViewModel {
             this.load();
             return;
         }
-        this.onStart();
+        this.activityHandler.onStart();
         this.searchText = searchText;
-        this.api.search(searchText, this.currentPage).then(
+        this.contactsApi.search(searchText, this.currentPage).then(
             action("fetchSuccess", result => {
-                result.totalElements > 0 ? this.onResults(result) : this.onSuccess("Kein Treffer mit <" + searchText + ">", "info")
+                result.totalElements > 0 ? this.onResults(result) : this.activityHandler.onSuccess("Kein Treffer mit <" + searchText + ">", "info")
             }),
             action("fetchError", error => {
-                this.onError(error)
+                this.activityHandler.onError(error)
             }));
     }
 
     //	@action
     add(newInsurer) {
-        this.onStart();
-        this.api.post(newInsurer).then(
+        this.activityHandler.onStart();
+        this.contactsApi.post(newInsurer).then(
             action("addSuccess", result => {
-                this.onSuccess("neuen Versicherer " + newInsurer.name + " angelegt.");
+                this.activityHandler.onSuccess("neuen Versicherer " + newInsurer.name + " angelegt.");
                 newInsurer.id = result;
                 this.searchResultList.push(newInsurer);
             }),
             action("addError", error => {
-                this.onError(error)
+                this.activityHandler.onError(error)
             }));
     }
 
 //	@action
     remove(insurer) {
-        this.onStart();
-        this.api.del(insurer.id).then(
+        this.activityHandler.onStart();
+        this.contactsApi.del(insurer.id).then(
             action("delSuccess", result => {
                 this.searchResultList = this.searchResultList.filter(i => i.id !== insurer.id);
-                this.onSuccess("Versicherer " + insurer.name + " gelöscht!");
+                this.activityHandler.onSuccess("Versicherer " + insurer.name + " gelöscht!");
             }),
             action("delError", error => {
-                this.onError(error)
+                this.activityHandler.onError(error)
             }));
     }
 
@@ -101,25 +75,25 @@ class InsurerViewModel {
             this.add(insurer);
             return;
         }
-        this.onStart();
-        this.api.put(insurer.id, insurer).then(
+        this.activityHandler.onStart();
+        this.contactsApi.put(insurer.id, insurer).then(
             action("saveSuccess", result => {
-                this.onSuccess("Versicherer " + insurer.name + " gespeichert")
+                this.activityHandler.onSuccess("Versicherer " + insurer.name + " gespeichert")
             }),
             action("saveError", error => {
-                this.onError("Fehler beim Speichern: " + error);
+                this.activityHandler.onError("Fehler beim Speichern: " + error);
             }));
     }
 
 //	@action
     load() {
-        this.onStart();
-        this.api.index(this.currentPage).then(
+        this.activityHandler.onStart();
+        this.contactsApi.index(this.currentPage).then(
             action("fetchSuccess", result => {
                 this.onResults(result);
             }),
             action("fetchError", error => {
-                this.onError(error);
+                this.activityHandler.onError(error);
             }));
     }
 
@@ -133,11 +107,7 @@ class InsurerViewModel {
 
 decorate(InsurerViewModel, {
     searchResultList: observable,
-    state: observable,
-    message: observable,
     currentPage: observable,
-
-    messageState: computed,
 
     changeToPage: action,
     search: action,
@@ -145,7 +115,6 @@ decorate(InsurerViewModel, {
     remove: action,
     load: action,
     save: action,
-    reset: action,
 })
 
 export default InsurerViewModel;
