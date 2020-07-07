@@ -7,9 +7,11 @@ class ActivityHandler {
 	messageSeverity = "success"
 
 	get messageState() {
+		console.log("MessageState == ", this.message !== undefined)
 		return this.message !== undefined;
 	}
-	resetMessageState() {
+	resetMessageState = () => {
+		console.log("reset MessageState", this.message)
 		this.message = undefined;
 	}
 	onStart() {
@@ -17,7 +19,7 @@ class ActivityHandler {
 	}
 	onError(errorMsg) {
 		this.state = "error";
-		this.message = errorMsg;
+		this.message = errorMsg instanceof Error ? errorMsg.message : errorMsg;
 		this.messageSeverity = "error";
 	}
 	onSuccess(msg, severity= "success") {
@@ -28,8 +30,9 @@ class ActivityHandler {
 }
 
 export default decorate(ActivityHandler, {
-	message: observable,
 	state: observable,
+	message: observable,
+	messageSeverity: observable,
 	resetMessageState: action,
 	messageState: computed,
 });

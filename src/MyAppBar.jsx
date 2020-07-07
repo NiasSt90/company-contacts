@@ -139,9 +139,9 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
 		{activityHandler.state === "pending" && <LinearProgress variant="indeterminate" color="secondary"/>}
 		<Snackbar
 				open={activityHandler.messageState}
-				onClose={() => activityHandler.resetMessageState()}
-				autoHideDuration={6000}>
-			<MuiAlert elevation={6} variant="filled" onClose={() => activityHandler.resetMessageState()}
+				onClose={activityHandler.resetMessageState}
+				autoHideDuration={5000}>
+			<MuiAlert elevation={6} variant="filled" onClose={activityHandler.resetMessageState}
 						 severity={activityHandler.messageSeverity}>
 				{activityHandler.message ? activityHandler.message.toString() : ""}
 			</MuiAlert>

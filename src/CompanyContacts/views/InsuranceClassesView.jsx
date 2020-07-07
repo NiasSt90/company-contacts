@@ -66,14 +66,14 @@ TabPanel.propTypes = {
 const InsuranceClassesView = observer(({model, insurer}) => {
 	const {isManager} = useRoles();
 	const { documentModel } = useStores();
+
+	// Section-TAB
 	const [selectedTab, setSelectedTab] = React.useState(0);
 	const changeSelectedTab = (event, value) => {
 		setSelectedTab(value);
 	}
-	const [newClassName, setNewClassName] = React.useState("");
-	const [openDialog, setOpenDialog] = React.useState(false);
 
-	//PERSON
+	//PERSON-Editor
 	const [selectedPerson, setSelectedPerson] = React.useState(undefined);
 	const handleAddPerson = () => {
 		setSelectedPerson(new ContactPerson())
@@ -95,7 +95,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		}
 	}
 
-	//LINKS
+	//LINKS-Editor
 	const [selectedLink, setSelectedLink] = React.useState(undefined);
 	const handleAddLink = () => {
 		setSelectedLink(new ContactLink())
@@ -117,7 +117,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		}
 	}
 
-	//Dokumente
+	//Dokument-ADD
 	const [newDocument, setNewDocument] = React.useState(undefined);
 	const handleSaveDocument = (document) => {
 		insurer.addDocument(document);
@@ -125,9 +125,15 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		setNewDocument(undefined);
 	}
 	const handleAddDocument = () => {
-		setNewDocument(new FileDocument())
+		let fileDocument = new FileDocument();
+		documentModel.selectDocument(fileDocument);
+		setNewDocument(fileDocument)
+	}
+	const handleCancelAddDocument = () => {
+		setNewDocument(undefined);
 	}
 
+	//Dokument-DELETE
 	const [deleteDocument, setDeleteDocument] = React.useState(undefined);
 	const handleDeleteDocument = (document) => {
 		if (document.id !== undefined) {
@@ -138,6 +144,9 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		setDeleteDocument(undefined);
 	}
 
+	//SECTION ADD
+	const [newClassName, setNewClassName] = React.useState("");
+	const [openDialog, setOpenDialog] = React.useState(false);
 	const handleOpenDialog = () => {
 		setOpenDialog(true);
 	}
@@ -203,7 +212,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 										  onSave={handleSaveLink} onCancel={() => handleSelectLink(undefined)}/>
 				}
 				{newDocument !== undefined &&
-					<DocumentUploader open document={newDocument} onSave={handleSaveDocument} onCancel={() => setNewDocument(undefined)}/>
+					<DocumentUploader open document={newDocument} onSave={handleSaveDocument} onCancel={handleCancelAddDocument}/>
 				}
 
 				{deleteDocument !== undefined &&

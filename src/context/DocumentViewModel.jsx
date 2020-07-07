@@ -4,7 +4,6 @@ import useFetch from "../hooks/useFetch";
 class DocumentViewModel {
 
 	selectedDocument
-	error
 
 	constructor(baseUrl, authTokenStore, activityHandler) {
 		this.blobsApi = useFetch(baseUrl + "/blobs", authTokenStore);
@@ -22,6 +21,11 @@ class DocumentViewModel {
 			this.selectedDocument.name = file.name;
 			this.selectedDocument.contentType = file.type;
 		}
+		else {
+			this.selectedDocument.file = undefined;
+			this.selectedDocument.name = "";
+			this.selectedDocument.contentType = "";
+		}
 	}
 
 	handleNameChange = (event) => {
@@ -34,41 +38,43 @@ class DocumentViewModel {
 		formData.append(`file`, this.selectedDocument.file);
 		return this.blobsApi.upload(formData).then(
 				action("uploadSuccess", result => {
-					this.selectedDocument.id = result;
 					this.activityHandler.onSuccess();
-					return true;
-				}))
-				.catch(action("uploadError", error => {
+					this.selectedDocument.id = result;
+					return this.selectedDocument;
+				}),
+				action("uploadError", error => {
 					this.activityHandler.onError(error);
-				}));
+				})
+		)
 	}
 
 	download(document) {
 		this.activityHandler.onStart();
-		this.blobsApi.download(document.id + "1")
-				.then(success => action("OnSuccess", success => {
+		this.blobsApi.download(document.id).then(
+				action("OnSuccess", success => {
 					this.activityHandler.onSuccess()
-				}))
-				.catch(error => action("OnError", error => {
-					this.activityHandler.onError(error)
+				}),
+				action("OnSuccess", error => {
+					this.activityHandler.onError(error);
 				}));
 	}
 
 	delete(document) {
-		try {
-			this.blobsApi.del(document.id)
-					.catch(error => action("OnDeleteError", error => {
-						this.error = error;
-					}));
-		}
-		catch (e) {
-			console.log(e);
-		}
+		this.activityHandler.onStart();
+		this.blobsApi.del(document.id).then(
+				action("OnSuccess", success => {
+					this.activityHandler.onSuccess("Dokument erfolgreich gelöscht!")
+				}),
+				action("OnDeleteError", error => {
+					this.activityHandler.onError(error);
+				}));
 	}
 }
+
 export default decorate(DocumentViewModel, {
 	selectedDocument: observable,
 	error: observable,
+	selectDocument: action,
 	uploadFile: action,
 	handleFileSelect: action,
 });
