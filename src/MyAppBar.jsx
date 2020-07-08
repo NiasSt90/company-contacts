@@ -100,15 +100,14 @@ const MyAppBar = observer(({model}) => {
 	return <div className={classes.grow}>
 		<AppBar position="static">
 			<Toolbar>
-				<IconButton edge="start" className={classes.menuButton} color="inherit">
-					<HomeIcon onClick={() => history.push("/")}/>
+				<IconButton edge="start" className={classes.menuButton} color="inherit" onClick={() => history.push("/")}>
+					<HomeIcon/>
 				</IconButton>
-				<Typography className={classes.title} variant="h6" noWrap>Versicherungs -
-					Ansprechpartner</Typography>
+				<Typography className={classes.title} variant="h6" noWrap>Versicherungs - Ansprechpartner</Typography>
 				<div className={classes.search}>
 					<div className={classes.searchIcon}><SearchIcon/></div>
 					<InputBase onChange={(e) => model.search(e.target.value)}
-								  placeholder="Search…"
+								  placeholder="Suchen…"
 								  classes={{
 									  root: classes.inputRoot,
 									  input: classes.inputInput,
