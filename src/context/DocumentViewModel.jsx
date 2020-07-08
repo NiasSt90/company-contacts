@@ -48,9 +48,9 @@ class DocumentViewModel {
 		)
 	}
 
-	download(document) {
+	download(id) {
 		this.activityHandler.onStart();
-		this.blobsApi.download(document.id).then(
+		this.blobsApi.download(id).then(
 				action("OnSuccess", success => {
 					this.activityHandler.onSuccess()
 				}),

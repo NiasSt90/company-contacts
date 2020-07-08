@@ -58,9 +58,9 @@ export class Insurer {
             documents: this.documents.map(doc => doc.serialize()),
         }
     }
-    static deserialize(json){
+    static deserialize(json, id){
         const insurer = new Insurer()
-        insurer.id = json['id']
+        insurer.id = id
         insurer.name = json['name'] || ''
         insurer.hints = json['hints'] || ''
         insurer.imgDataURL = json['imgDataURL'] || ''

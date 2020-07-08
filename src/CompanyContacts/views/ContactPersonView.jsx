@@ -14,14 +14,13 @@ import IconButton from "@material-ui/core/IconButton";
 import SmartphoneIcon from '@material-ui/icons/Smartphone';
 import Box from "@material-ui/core/Box";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ConfirmDialog from "./ConfirmDialog";
-import ContactPersonEditor from "./ContactPersonEditor";
 import EditIcon from "@material-ui/icons/Edit";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {useRoles} from "../../hooks/useRoles";
+import {useConfirmation} from "../../utils/ConfirmationService";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -40,12 +39,23 @@ const useStyles = makeStyles((theme) => ({
 const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 	const classes = useStyles();
 	const {isManager} = useRoles();
-	const [deleteConfirm, setDeleteConfirm] = React.useState(false);
+	const confirm = useConfirmation();
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
 
-	const deletePerson = () => {onDelete(person);}
 	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
 	const handleCloseMenu = () => {setMenuAnchorEl(null);};
+	const editPerson = () => {
+		handleCloseMenu();
+		onEdit(person);
+	}
+	const tryToDelete = () => {
+		handleCloseMenu();
+		confirm({
+			variant: "danger",
+			title: `Möchten Sie die Kontaktdaten für ${person.name} wirklich löschen?`,
+			description: "Die Aktion kann nicht rückgängig gemacht werden...."
+		}).then(() => onDelete(person));
+	};
 
 	return <>
 		<ListItem>
@@ -82,17 +92,11 @@ const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 			 <ListItemSecondaryAction>
 				 <IconButton onClick={handleOpenMenuClick}><MoreVertIcon/></IconButton>
 				 <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu}>
-					 <MenuItem onClick={() => {
-						 onEdit(person);
-						 handleCloseMenu()
-					 }}>
+					 <MenuItem onClick={editPerson}>
 						 <ListItemIcon><EditIcon fontSize="small"/></ListItemIcon>
 						 <ListItemText>Bearbeiten</ListItemText>
 					 </MenuItem>
-					 <MenuItem onClick={() => {
-						 setDeleteConfirm(true);
-						 handleCloseMenu()
-					 }}>
+					 <MenuItem onClick={tryToDelete}>
 						 <ListItemIcon><DeleteIcon fontSize="small"/></ListItemIcon>
 						 <ListItemText>Entfernen</ListItemText>
 					 </MenuItem>
@@ -100,14 +104,6 @@ const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 			 </ListItemSecondaryAction>
 			}
 		</ListItem>
-		{isManager() &&
-		 <>
-			 <ConfirmDialog title="Kontakt löschen?" open={deleteConfirm} setOpen={setDeleteConfirm}
-								 onConfirm={deletePerson}>
-				 Möchten Sie die Kontaktdaten für {person.name} wirklich löschen?
-			 </ConfirmDialog>
-		 </>
-		}
 	</>
 });
 

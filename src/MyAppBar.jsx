@@ -20,6 +20,8 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import {useRoles} from "./hooks/useRoles";
 import Tooltip from "@material-ui/core/Tooltip";
 import {useStores} from "./hooks/useStores";
+import {useHistory} from "react-router";
+import HomeIcon from '@material-ui/icons/Home';
 
 const useStyles = makeStyles(theme => ({
 	grow: {
@@ -85,10 +87,11 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
+const MyAppBar = observer(({model}) => {
 	const classes = useStyles();
 	const {themeStore, authStore, activityHandler } = useStores();
 	const {authenticated, login, logout} = useRoles();
+	const history = useHistory();
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 	const handleMobileMenuOpen = (event) => {
 		setMobileMoreAnchorEl(event.currentTarget);
@@ -97,8 +100,9 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
 	return <div className={classes.grow}>
 		<AppBar position="static">
 			<Toolbar>
-				<IconButton edge="start" className={classes.menuButton}
-								color="inherit"><MenuIcon/></IconButton>
+				<IconButton edge="start" className={classes.menuButton} color="inherit">
+					<HomeIcon onClick={() => history.push("/")}/>
+				</IconButton>
 				<Typography className={classes.title} variant="h6" noWrap>Versicherungs -
 					Ansprechpartner</Typography>
 				<div className={classes.search}>
@@ -115,7 +119,7 @@ const MyAppBar = observer(({model, darkState, handleThemeChange}) => {
 				<div className={classes.sectionDesktop}>
 					<Tooltip title="Theme wechseln"><Switch checked={themeStore.darkState} onChange={themeStore.handleThemeChange}/></Tooltip>
 					<Tooltip title="Neu laden">
-						<IconButton edge="end" onClick={() => model.load()} color="inherit"><RefreshIcon/></IconButton>
+						<IconButton edge="end" onClick={() => model.showAll()} color="inherit"><RefreshIcon/></IconButton>
 					</Tooltip>
 					{!authenticated() &&
 					 <Tooltip title="Anmelden...">

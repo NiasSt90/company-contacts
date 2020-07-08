@@ -1,4 +1,4 @@
-import {action, computed, decorate, observable} from 'mobx'
+import {action, decorate, observable} from 'mobx'
 import {Insurer} from "./model/Insurer";
 import useFetch from "../hooks/useFetch";
 
@@ -15,7 +15,7 @@ class InsurerViewModel {
     onResults(result) {
         console.log(result);
         this.activityHandler.onSuccess();
-        this.searchResultList = result.content.map(content => InsurerViewModel.mapToInsurer(content));
+        this.searchResultList = result.content.map(content => Insurer.deserialize(content.data, content.id));
         this.currentPage = {page: result.number, size: result.size,
             totalElements:result.totalElements, totalPages: result.totalPages,
             first:result.first, last:result.last};
@@ -28,7 +28,7 @@ class InsurerViewModel {
     //	@action
     search(searchText) {
         if (!searchText || searchText.trim().length === 0) {
-            this.load();
+            this.showAll();
             return;
         }
         this.activityHandler.onStart();
@@ -45,11 +45,11 @@ class InsurerViewModel {
     //	@action
     add(newInsurer) {
         this.activityHandler.onStart();
-        this.contactsApi.post(newInsurer).then(
+        return this.contactsApi.post(newInsurer).then(
             action("addSuccess", result => {
                 this.activityHandler.onSuccess("neuen Versicherer " + newInsurer.name + " angelegt.");
                 newInsurer.id = result;
-                this.searchResultList.push(newInsurer);
+                return newInsurer;
             }),
             action("addError", error => {
                 this.activityHandler.onError(error)
@@ -57,7 +57,7 @@ class InsurerViewModel {
     }
 
 //	@action
-    remove(insurer) {
+    delete(insurer) {
         this.activityHandler.onStart();
         this.contactsApi.del(insurer.id).then(
             action("delSuccess", result => {
@@ -85,8 +85,27 @@ class InsurerViewModel {
             }));
     }
 
+    load(id) {
+        this.activityHandler.onStart();
+        return this.contactsApi.get(id).then(
+              action("loadSuccess", result => {
+                  this.activityHandler.onSuccess();
+                  return  Insurer.deserialize(result.data, result.id);
+              }),
+              action("loadError", error => {
+                  this.activityHandler.onError("Fehler beim Laden: " + error);
+              })
+        )
+    }
+
+    create() {
+        this.activityHandler.onStart();
+        return Promise.resolve(new Insurer("Neuer Versicherer"))
+              .finally(() => this.activityHandler.onSuccess());
+    }
+
 //	@action
-    load() {
+    showAll() {
         this.activityHandler.onStart();
         this.contactsApi.index(this.currentPage).then(
             action("fetchSuccess", result => {
@@ -96,13 +115,6 @@ class InsurerViewModel {
                 this.activityHandler.onError(error);
             }));
     }
-
-    static mapToInsurer(contentEntry) {
-        let insurer = Insurer.deserialize(contentEntry.data);
-        insurer.id = contentEntry.id;
-        return insurer;
-    }
-
 }
 
 decorate(InsurerViewModel, {
@@ -114,6 +126,7 @@ decorate(InsurerViewModel, {
     add: action,
     remove: action,
     load: action,
+    showAll: action,
     save: action,
 })
 

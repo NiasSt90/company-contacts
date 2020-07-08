@@ -2,12 +2,12 @@ import {action, computed, decorate, observable} from "mobx";
 
 class ActivityHandler {
 
-	state = "pending" // "pending" / "done" / "error"
+	state = "done" // "pending" / "done" / "error"
 	message = undefined
 	messageSeverity = "success"
 
 	get messageState() {
-		console.log("MessageState == ", this.message !== undefined)
+		console.log("MessageState == ", this.message !== undefined, this.message)
 		return this.message !== undefined;
 	}
 	resetMessageState = () => {

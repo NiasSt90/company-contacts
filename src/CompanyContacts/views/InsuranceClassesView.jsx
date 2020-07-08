@@ -1,7 +1,6 @@
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
 import Paper from "@material-ui/core/Paper";
 import React from "react";
 import ContactPersonView from "./ContactPersonView";
@@ -26,22 +25,7 @@ import {ContactLink} from "../model/ContactLink";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import {FileDocument} from "../model/FileDocument";
-import DocumentUploader from "./DocumentUploader";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import Link from "@material-ui/core/Link";
 import {useStores} from "../../hooks/useStores";
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import Divider from "@material-ui/core/Divider";
-import ConfirmDialog from "./ConfirmDialog";
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -65,14 +49,11 @@ TabPanel.propTypes = {
 
 const InsuranceClassesView = observer(({model, insurer}) => {
 	const {isManager} = useRoles();
-	const { documentModel } = useStores();
-
 	// Section-TAB
 	const [selectedTab, setSelectedTab] = React.useState(0);
 	const changeSelectedTab = (event, value) => {
 		setSelectedTab(value);
 	}
-
 	//PERSON-Editor
 	const [selectedPerson, setSelectedPerson] = React.useState(undefined);
 	const handleAddPerson = () => {
@@ -94,7 +75,6 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
 		}
 	}
-
 	//LINKS-Editor
 	const [selectedLink, setSelectedLink] = React.useState(undefined);
 	const handleAddLink = () => {
@@ -115,33 +95,6 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		if (insurer.insuranceClasses[selectedTab].isEmpty()) {
 			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
 		}
-	}
-
-	//Dokument-ADD
-	const [newDocument, setNewDocument] = React.useState(undefined);
-	const handleSaveDocument = (document) => {
-		insurer.addDocument(document);
-		model.save(insurer);
-		setNewDocument(undefined);
-	}
-	const handleAddDocument = () => {
-		let fileDocument = new FileDocument();
-		documentModel.selectDocument(fileDocument);
-		setNewDocument(fileDocument)
-	}
-	const handleCancelAddDocument = () => {
-		setNewDocument(undefined);
-	}
-
-	//Dokument-DELETE
-	const [deleteDocument, setDeleteDocument] = React.useState(undefined);
-	const handleDeleteDocument = (document) => {
-		if (document.id !== undefined) {
-			documentModel.delete(document);
-		}
-		insurer.delDocument(document);
-		model.save(insurer);
-		setDeleteDocument(undefined);
 	}
 
 	//SECTION ADD
@@ -181,20 +134,6 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 						</List>
 					</TabPanel>)
 			}
-			{insurer.documents.length > 0 && <Divider/>}
-			{insurer.documents.map((doc, i) => <List>
-					<ListItem button>
-						<ListItemIcon>
-							{"application/pdf" === doc.contentType ? <PictureAsPdfIcon/> : <CloudDownloadIcon/>}
-						</ListItemIcon>
-						<ListItemText primary={doc.name} onClick={() => documentModel.download(doc)}/>
-						{isManager() && <ListItemSecondaryAction>
-								<IconButton edge="end" onClick={() => setDeleteDocument(doc)}><DeleteIcon /></IconButton>
-							</ListItemSecondaryAction>
-						}
-					</ListItem>
-				</List>)
-			}
 			{insurer.insuranceClasses.length === 0 &&
 			 <Box textAlign="center" fontStyle="oblique" fontWeight="fontWeightLight">Legen Sie zuerst einen Bereich
 				 an...</Box>
@@ -211,20 +150,10 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 				 <ContactLinkEditor open link={selectedLink}
 										  onSave={handleSaveLink} onCancel={() => handleSelectLink(undefined)}/>
 				}
-				{newDocument !== undefined &&
-					<DocumentUploader open document={newDocument} onSave={handleSaveDocument} onCancel={handleCancelAddDocument}/>
-				}
-
-				{deleteDocument !== undefined &&
-					<ConfirmDialog title="Dokument löschen?" open setOpen={() => setDeleteDocument(undefined)} onConfirm={() => handleDeleteDocument(deleteDocument)}>
-						Möchten Sie das Dokument {deleteDocument.name} wirklich löschen?
-					</ConfirmDialog>
-				}
 				{insurer.insuranceClasses.length > 0 &&
 				 <>
 					 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt</Button>
 					 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link</Button>
-					 <Button color="primary" startIcon={<CloudUploadIcon/>} onClick={handleAddDocument}>Dokument</Button>
 				 </>
 				}
 			</CardActions>

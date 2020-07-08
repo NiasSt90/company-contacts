@@ -14,6 +14,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import {KeycloakProvider} from "@react-keycloak/web";
 import MuiAlert from "@material-ui/lab/Alert";
 import {useStores} from "./hooks/useStores";
+import {Route, Switch} from 'react-router-dom';
+import {ConfirmationServiceProvider} from "./utils/ConfirmationService";
+import InsurerContainer from "./CompanyContacts/InsurerContainer";
+import DownloadContainer from "./CompanyContacts/DownloadContainer";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -21,9 +25,9 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const App = observer( () =>  {
+const App = observer(() => {
 	const classes = useStyles();
-	const { authStore, insurerModel, themeStore } = useStores();
+	const {authStore, insurerModel, themeStore} = useStores();
 	const palletType = themeStore.darkState ? "dark" : "light";
 	const mainPrimaryColor = themeStore.darkState ? orange[500] : blue[500];
 	const mainSecondaryColor = themeStore.darkState ? deepOrange[900] : red[500];
@@ -43,48 +47,31 @@ const App = observer( () =>  {
 			}
 		}
 	});
-	const onToken = (tokens) => {
-		authStore.token = tokens.token;
-		authStore.keycloak = keycloak;
-	}
-	const onKeycloakEvent = (event, error) => {
-		console.log('onKeycloakEvent: ', event, error)
-		switch (event) {
-			case "onReady":
-				insurerModel.load();
-				authStore.init();
-				break;
-			case "onAuthSuccess":
-			break;
-			case "onAuthError":
-			case "onAuthRefreshSuccess":
-			case "onAuthRefreshError":
-			case "onTokenExpired":
-			case "onAuthLogout":
-				break;
-			default:
-		}
-	}
 	return (
-		<KeycloakProvider
-				keycloak={keycloak}
-				initConfig={{onLoad: 'login-required', promiseType: 'native', checkLoginIframe: true}}
-				LoadingComponent={<CircularProgress/>} onEvent={onKeycloakEvent} onTokens={onToken}>
-			<ThemeProvider theme={selectedTheme}>
-				<div className={classes.root}>
-					<CssBaseline/>
-					<div className="App">
-						<MyAppBar model={insurerModel}/>
-						<InsurerListView model={insurerModel}/>
+			<KeycloakProvider
+					keycloak={keycloak} initConfig={{onLoad: 'check-sso', promiseType: 'native', checkLoginIframe: true}}
+					LoadingComponent={<CircularProgress/>} onEvent={authStore.onKeycloakEvent} onTokens={authStore.onToken}>
+				<ThemeProvider theme={selectedTheme}>
+					<div className={classes.root}>
+						<CssBaseline/>
+						<div className="App">
 
-						<MuiAlert elevation={6} variant="filled" severity={"warning"}>
-							Diese Anwendung ist als technical-Preview zu betrachten.<br/>
-							Aktuell darf jeder alles Anlegen/Bearbeiten/Löschen....
-						</MuiAlert>
+							<ConfirmationServiceProvider>
+								<MyAppBar model={insurerModel}/>
+								{authStore.token &&
+								 <Switch>
+									 <Route exact path='/'><InsurerListView model={insurerModel}/></Route>
+									 <Route exact path='/insurer'><InsurerContainer/></Route>
+									 <Route path='/insurer/:id'><InsurerContainer/></Route>
+									 <Route path='/download/:id'><DownloadContainer/></Route>
+								 </Switch>
+								}
+							</ConfirmationServiceProvider>
+
+						</div>
 					</div>
-				</div>
-			</ThemeProvider>
-		</KeycloakProvider>
+				</ThemeProvider>
+			</KeycloakProvider>
 	);
 });
 

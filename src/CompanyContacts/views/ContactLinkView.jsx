@@ -7,21 +7,27 @@ import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ConfirmDialog from "./ConfirmDialog";
 import EditIcon from "@material-ui/icons/Edit";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Link from "@material-ui/core/Link";
+import {useConfirmation} from "../../utils/ConfirmationService";
 
 const ContactLinkView = observer(({link, onEdit, onDelete}) => {
-	const [deleteConfirm, setDeleteConfirm] = React.useState(false);
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
-
-	const deleteLink = () => {onDelete(link);}
 	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
 	const handleCloseMenu = () => {setMenuAnchorEl(null);};
+	const confirm = useConfirmation();
+	const tryToDelete = () => {
+		handleCloseMenu();
+		confirm({
+			variant: "danger",
+			title: `Möchten Sie den Link "${link.name}" wirklich löschen?`,
+			description: "Die Aktion kann nicht rückgängig gemacht werden...."
+		}).then(() => onDelete(link));
+	};
 
 	return <>
 		<ListItem>
@@ -38,16 +44,13 @@ const ContactLinkView = observer(({link, onEdit, onDelete}) => {
 						<ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
 						<ListItemText>Bearbeiten</ListItemText>
 					</MenuItem>
-					<MenuItem onClick={() => {setDeleteConfirm(true);handleCloseMenu()}}>
+					<MenuItem onClick={tryToDelete}>
 						<ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
 						<ListItemText>Entfernen</ListItemText>
 					</MenuItem>
 				</Menu>
 			</ListItemSecondaryAction>
 		</ListItem>
-		<ConfirmDialog title="Link löschen?" open={deleteConfirm} setOpen={setDeleteConfirm} onConfirm={deleteLink}>
-			Möchten Sie den Link {link.name} wirklich löschen?
-		</ConfirmDialog>
 	</>
 });
 
