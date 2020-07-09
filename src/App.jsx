@@ -15,6 +15,7 @@ import InsurerContainer from "./CompanyContacts/InsurerContainer";
 import DownloadContainer from "./CompanyContacts/DownloadContainer";
 import InsurerListContainer from "./CompanyContacts/InsurerListContainer";
 import Typography from "@material-ui/core/Typography";
+import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 const App = observer(() => {
 	const classes = useStyles();
-	const {authStore, insurerModel, themeStore} = useStores();
+	const {authStore, themeStore} = useStores();
 	return (
 			<KeycloakProvider
 					keycloak={keycloak} initConfig={{onLoad: 'check-sso', promiseType: 'native', checkLoginIframe: true}}
@@ -33,9 +34,8 @@ const App = observer(() => {
 					<div className={classes.root}>
 						<CssBaseline/>
 						<div className="App">
-
 							<ConfirmationServiceProvider>
-								<MyAppBar model={insurerModel}/>
+								<MyAppBar/>
 								{authStore.token ?
 								 <Switch>
 									 <Route exact path='/'><InsurerListContainer/></Route>
@@ -43,10 +43,9 @@ const App = observer(() => {
 									 <Route path='/insurer/:id'><InsurerContainer/></Route>
 									 <Route path='/download/:id'><DownloadContainer/></Route>
 								 </Switch>
-								 : <Typography align={"center"} variant="h5">Sie sind nicht angemeldet</Typography>
+								 : <Container maxWidth={"xs"}><Typography variant="h5">Sie sind nicht angemeldet</Typography></Container>
 								}
 							</ConfirmationServiceProvider>
-
 						</div>
 					</div>
 				</ThemeProvider>

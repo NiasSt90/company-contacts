@@ -12,9 +12,11 @@ class AuthTokenStore {
 
 	onToken = (tokens) => {
 		this.token = tokens.token;
-		this.username = keycloak.tokenParsed.preferred_username;
-		this.name = keycloak.tokenParsed.name;
-		this.email = keycloak.tokenParsed.email;
+		if (keycloak.tokenParsed) {
+			this.username = keycloak.tokenParsed.preferred_username;
+			this.name = keycloak.tokenParsed.name;
+			this.email = keycloak.tokenParsed.email;
+		}
 	}
 
 	onKeycloakEvent = (event, error) => {

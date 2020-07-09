@@ -6,14 +6,18 @@ import settings from "../settings";
 import DocumentViewModel from "./DocumentViewModel";
 import ActivityHandler from "./ActivityHandler";
 import {useLocalStore} from "mobx-react-lite";
+import {ToolbarController} from "./ToolbarController";
 
 let authTokenStore = new AuthTokenStore();
 let activityHandler = new ActivityHandler();
 function createNewStore() {
 	return {
+		//global
 		authStore: authTokenStore,
-		themeStore: new ThemeStore(),
 		activityHandler: activityHandler,
+		toolbarHandler: new ToolbarController(),
+		themeStore: new ThemeStore(),
+		//local, could be extracted and move into provider-based store/context
 		documentModel: new DocumentViewModel(settings.REST_API_CONTACTS, authTokenStore, activityHandler),
 		insurerModel: new InsurerViewModel(settings.REST_API_CONTACTS, authTokenStore, activityHandler),
 	}

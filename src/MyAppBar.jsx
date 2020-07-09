@@ -1,11 +1,9 @@
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import Switch from "@material-ui/core/Switch";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
@@ -87,9 +85,9 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const MyAppBar = observer(({model}) => {
+const MyAppBar = observer(({props}) => {
 	const classes = useStyles();
-	const {themeStore, authStore, activityHandler } = useStores();
+	const {toolbarHandler, themeStore, authStore, activityHandler } = useStores();
 	const {authenticated, login, logout} = useRoles();
 	const history = useHistory();
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -103,23 +101,19 @@ const MyAppBar = observer(({model}) => {
 				<IconButton edge="start" className={classes.menuButton} color="inherit" onClick={() => history.push("/")}>
 					<HomeIcon/>
 				</IconButton>
-				<Typography className={classes.title} variant="h6" noWrap>Versicherungs - Ansprechpartner</Typography>
-				<div className={classes.search}>
+				<Typography className={classes.title} variant="h6" noWrap>{toolbarHandler.title}</Typography>
+				{toolbarHandler.showSearch && <div className={classes.search}>
 					<div className={classes.searchIcon}><SearchIcon/></div>
-					<InputBase onChange={(e) => model.search(e.target.value)}
-								  placeholder="Suchen…"
-								  classes={{
+					<InputBase onChange={toolbarHandler.searchAction} placeholder="Suchen…" classes={{
 									  root: classes.inputRoot,
 									  input: classes.inputInput,
 								  }}
 					/>
-				</div>
+				</div>}
 				<div className={classes.grow}/>
 				<div className={classes.sectionDesktop}>
+					{toolbarHandler.showDefaultActions && <>
 					<Tooltip title="Theme wechseln"><Switch checked={themeStore.darkState} onChange={themeStore.handleThemeChange}/></Tooltip>
-					<Tooltip title="Neu laden">
-						<IconButton edge="end" onClick={() => model.showAll()} color="inherit"><RefreshIcon/></IconButton>
-					</Tooltip>
 					{!authenticated() &&
 					 <Tooltip title="Anmelden...">
 						 <IconButton edge="end" onClick={() => login()} color="inherit"><LockOpenIcon/></IconButton>
@@ -130,10 +124,17 @@ const MyAppBar = observer(({model}) => {
 						 <IconButton edge="end" onClick={() => logout()} color="inherit"><LockIcon/></IconButton>
 					 </Tooltip>
 					}
+					</>}
+					{toolbarHandler.actions.map(({name, label, icon, ...rest}) => (
+							<Tooltip key={name} title={label}>
+								<IconButton edge="end" color="inherit" {...rest}>{icon}</IconButton>
+							</Tooltip>
+					))}
 				</div>
 				<div className={classes.sectionMobile}>
 					<IconButton onClick={handleMobileMenuOpen} color="inherit">
 						<MoreIcon/>
+						{/*TODO: ...Menu muss noch  implementiert werden*/}
 					</IconButton>
 				</div>
 			</Toolbar>

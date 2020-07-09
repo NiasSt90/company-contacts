@@ -4,6 +4,7 @@ import InsurerView from "./views/InsurerView";
 import ErrorBoundary from "./views/ErrorBoundary.jsx";
 import Pagination from "@material-ui/lab/Pagination";
 import AddIcon from "@material-ui/icons/Add";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import Fab from "@material-ui/core/Fab";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -13,9 +14,14 @@ import {useStores} from "../hooks/useStores";
 
 const InsurerListContainer = observer(({props}) => {
 			const {isManager} = useRoles();
-			const {insurerModel} = useStores();
+			const {toolbarHandler, insurerModel} = useStores();
 			const history = useHistory();
 			useEffect(() => {
+				toolbarHandler.changeToolbar({title: "Versicherer - Ansprechpartner", showSearch: true, showDefaultActions: true,
+					searchAction: (event) => insurerModel.search(event.target.value),
+					actions: [
+						{name: "Reload", label: "Neu laden",icon: <RefreshIcon/>, onClick:() => insurerModel.showAll()}
+					]});
 				insurerModel.showAll();
 			}, [insurerModel]);
 			return <>
