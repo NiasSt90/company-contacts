@@ -3,7 +3,7 @@ FROM node:12 as build
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
-COPY .npmrc package.json /usr/src/app/
+COPY .npmrc package.json tsconfig.json /usr/src/app/
 RUN npm install --silent
 COPY public /usr/src/app/public
 COPY src /usr/src/app/src
