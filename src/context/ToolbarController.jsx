@@ -1,7 +1,7 @@
 import {decorate, observable} from "mobx";
 
 export class ToolbarController {
-	title = "Versicherungs - Ansprechpartner"
+	title = "Produktpartner"
 	showSearch = false
 	showDefaultActions = true
 	searchAction

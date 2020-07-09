@@ -13,13 +13,19 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormLabel from "@material-ui/core/FormLabel";
 import InputBase from "@material-ui/core/InputBase";
 import {makeStyles} from "@material-ui/core/styles";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import Input from "@material-ui/core/Input";
+import Chip from "@material-ui/core/Chip";
+import MenuItem from "@material-ui/core/MenuItem";
 
+const vertriebe = ["DPC", "PKM", "FBD", "IMPACT", "ForumFinanz"]//ACHTUNG: keycloak "Gruppen"
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: 'flex',
 	},
 	dialogContent: {
-		//margin: theme.spacing(1),
+		margin: theme.spacing(1),
 	},
 	formGroup: {
 		margin: theme.spacing(2, 0),
@@ -37,6 +43,7 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 		hints: insurer.hints,
 		imgDataURL: insurer.imgDataURL,
 		imgURL: undefined,
+		visibility: insurer.visibility,
 	})
 	const handleInputChange = e => {
 		const {name, value} = e.target
@@ -81,6 +88,22 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 					<FormHelperText>Versicherer - Icon</FormHelperText>
 				</FormControl>
 				<TextField label="Name" type="text" value={values.name} name="name" onChange={handleInputChange}/>
+			</FormGroup>
+			<FormGroup row className={classes.formGroup}>
+				<FormControl>
+					<InputLabel>Sichtbar für Vertrieb</InputLabel>
+					<Select multiple value={values.visibility} name="visibility" onChange={handleInputChange}
+							  input={<Input id="select-multiple-chip" />}
+							  renderValue={(selected) => (
+									<div className={classes.chips}>
+										{selected.map((value) => (
+												<Chip key={value} label={value} className={classes.chip} />
+										))}
+									</div>
+							  )}>
+						{vertriebe.map((name) => (<MenuItem key={name} value={name}>{name}</MenuItem>))}
+					</Select>
+				</FormControl>
 			</FormGroup>
 			<FormGroup row className={classes.formGroup}>
 				<TextField label="Straße" type="text" value={values.street} name="street" onChange={handleInputChange}/>

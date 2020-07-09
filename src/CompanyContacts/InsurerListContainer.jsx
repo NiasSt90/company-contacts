@@ -17,13 +17,13 @@ const InsurerListContainer = observer(({props}) => {
 			const {toolbarHandler, insurerModel} = useStores();
 			const history = useHistory();
 			useEffect(() => {
-				toolbarHandler.changeToolbar({title: "Versicherer - Ansprechpartner", showSearch: true, showDefaultActions: true,
+				toolbarHandler.changeToolbar({title: "Produktpartner - App", showSearch: true, showDefaultActions: true,
 					searchAction: (event) => insurerModel.search(event.target.value),
 					actions: [
 						{name: "Reload", label: "Neu laden",icon: <RefreshIcon/>, onClick:() => insurerModel.showAll()}
 					]});
 				insurerModel.showAll();
-			}, [insurerModel]);
+			}, [insurerModel, toolbarHandler]);
 			return <>
 				<ErrorBoundary>
 					{insurerModel.searchResultList.map((insurer, i) =>

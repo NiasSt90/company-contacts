@@ -5,19 +5,19 @@ import {FileDocument} from "./FileDocument";
 
 export class Insurer {
 
-    //unique ID for this entry
     id
 
-    //name of the insurer
-    /*@observable*/ name = ''
-
-    address = new Address();
-
-    insuranceClasses = []
+    name = ''
 
     hints = ''
 
     imgDataURL
+
+    address = new Address();
+
+    visibility = []
+
+    insuranceClasses = []
 
     documents = []
 
@@ -56,6 +56,7 @@ export class Insurer {
             address: this.address.serialize(),
             insuranceClasses: this.insuranceClasses.map(insuranceClass => insuranceClass.serialize()),
             documents: this.documents.map(doc => doc.serialize()),
+            ...(this.visibility.length > 0 ? { visibility: this.visibility } : {}),
         }
     }
     static deserialize(json, id){
@@ -63,6 +64,7 @@ export class Insurer {
         insurer.id = id
         insurer.name = json['name'] || ''
         insurer.hints = json['hints'] || ''
+        insurer.visibility = json['visibility'] || []
         insurer.imgDataURL = json['imgDataURL'] || ''
         insurer.address = Address.deserialize(json['address'])
         insurer.insuranceClasses = json['insuranceClasses'] ? json['insuranceClasses'].map(insuranceClass => InsuranceClass.deserialize(insuranceClass)) : []
@@ -74,6 +76,7 @@ export class Insurer {
 decorate(Insurer, {
     name: observable,
     hints: observable,
+    visibility: observable,
     insuranceClasses: observable,
     documents: observable,
 })

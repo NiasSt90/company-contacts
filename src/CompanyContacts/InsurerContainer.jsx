@@ -12,14 +12,20 @@ const InsurerContainer = observer(({props}) => {
 	const [insurer, setInsurer] = React.useState(null);
 	const load = () => {
 		if (id) {
-			insurerModel.load(id).then(action("LoadInsurer", insurer => setInsurer(insurer)));
+			insurerModel.load(id).then(action("LoadInsurer", insurer => {
+				setInsurer(insurer);
+				toolbarHandler.changeToolbar({title: "Produktpartner " + insurer.name})
+			}));
 		}
 		else {
-			insurerModel.create().then(action("NewInsurer", insurer => setInsurer(insurer)));
+			insurerModel.create().then(action("NewInsurer", insurer => {
+				setInsurer(insurer);
+				toolbarHandler.changeToolbar({title: "neuen Produktpartner anlegen..."})
+			}));
 		}
 	}
 	useEffect(() => {
-		toolbarHandler.changeToolbar({title: "Versicherer", showSearch: false, showDefaultActions: true,
+		toolbarHandler.changeToolbar({title: "Produktpartner", showSearch: false, showDefaultActions: true,
 			actions: [
 				{name: "Reload", label: "Neu laden",icon: <RefreshIcon/>, onClick:load}
 			]});
