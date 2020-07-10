@@ -2,7 +2,6 @@ import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -13,11 +12,12 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormLabel from "@material-ui/core/FormLabel";
 import InputBase from "@material-ui/core/InputBase";
 import {makeStyles} from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import Chip from "@material-ui/core/Chip";
 import MenuItem from "@material-ui/core/MenuItem";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const vertriebe = ["DPC", "PKM", "FBD", "IMPACT", "ForumFinanz"]//ACHTUNG: keycloak "Gruppen"
 const useStyles = makeStyles((theme) => ({
@@ -44,10 +44,15 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 		imgDataURL: insurer.imgDataURL,
 		imgURL: undefined,
 		visibility: insurer.visibility,
+		visibilityPublic: insurer.visibility.length === 0,
 	})
 	const handleInputChange = e => {
 		const {name, value} = e.target
 		setValues({...values, [name]: value})
+	}
+	const handleCheckedChange = e => {
+		const {name, checked} = e.target
+		setValues({...values, [name]: checked})
 	}
 	const handleSave = () => {
 		onSave(values);
@@ -75,11 +80,8 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 		})();
 	}
 	return <Dialog open={open} onClose={handleCancel}>
-		<DialogTitle id="InsurerEditorDialog">Versicherer</DialogTitle>
+		<DialogTitle id="InsurerEditorDialog">Versicherer bearbeiten</DialogTitle>
 		<DialogContent className={classes.dialogContent}>
-			<DialogContentText>
-				Versicherer bearbeiten...
-			</DialogContentText>
 			<FormGroup row className={classes.formGroup}>
 				<FormControl>
 					<FormLabel>Icon</FormLabel>
@@ -90,22 +92,6 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 				<TextField label="Name" type="text" value={values.name} name="name" onChange={handleInputChange}/>
 			</FormGroup>
 			<FormGroup row className={classes.formGroup}>
-				<FormControl>
-					<InputLabel>Sichtbar für Vertrieb</InputLabel>
-					<Select multiple value={values.visibility} name="visibility" onChange={handleInputChange}
-							  input={<Input id="select-multiple-chip" />}
-							  renderValue={(selected) => (
-									<div className={classes.chips}>
-										{selected.map((value) => (
-												<Chip key={value} label={value} className={classes.chip} />
-										))}
-									</div>
-							  )}>
-						{vertriebe.map((name) => (<MenuItem key={name} value={name}>{name}</MenuItem>))}
-					</Select>
-				</FormControl>
-			</FormGroup>
-			<FormGroup row className={classes.formGroup}>
 				<TextField label="Straße" type="text" value={values.street} name="street" onChange={handleInputChange}/>
 				<TextField label="Hausnummer" type="text" value={values.number} name="number" onChange={handleInputChange}/>
 				<br/>
@@ -114,11 +100,33 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 			</FormGroup>
 			<FormGroup row className={classes.formGroup}>
 				<FormControl>
-					<TextareaAutosize id="hints" name="hints" value={values.hints} onChange={handleInputChange} rowsMin={10}
+					<TextareaAutosize id="hints" name="hints" value={values.hints} onChange={handleInputChange} rowsMin={6}
 											placeholder="Hinweise und weitergehende Informationen zum Versicherer"/>
 					<FormHelperText>Hinweise und weitergehende Informationen zum Versicherer</FormHelperText>
 				</FormControl>
 			</FormGroup>
+
+			<FormControl component="fieldset">
+				<FormLabel component="legend">Sichtbarkeiten für Vertriebe</FormLabel>
+				<FormGroup>
+					<FormControlLabel
+							control={<Switch checked={values.visibilityPublic} onChange={handleCheckedChange} name="visibilityPublic" />}
+							label="alle"
+					/>
+					{!values.visibilityPublic && <Select multiple value={values.visibility} name="visibility" onChange={handleInputChange}
+								input={<Input id="select-multiple-chip"/>}
+								renderValue={(selected) => (
+										<div className={classes.chips}>
+											{selected.map((value) => (
+													<Chip key={value} label={value} className={classes.chip}/>
+											))}
+										</div>
+								)}>
+						 {vertriebe.map((name) => (<MenuItem key={name} value={name}>{name}</MenuItem>))}
+					 </Select>}
+				</FormGroup>
+				<FormHelperText>Für welchen Vertrieb der Versicherer sichtbar ist.</FormHelperText>
+			</FormControl>
 		</DialogContent>
 		<DialogActions>
 			<Button onClick={handleCancel} color="secondary" variant="contained">Abbrechen</Button>

@@ -68,7 +68,7 @@ const InsurerView = observer(({insurer, expanded}) => {
         selectedInsurer.address.city = values["city"];
         selectedInsurer.hints = values["hints"];
         selectedInsurer.imgDataURL = values["imgDataURL"];
-        selectedInsurer.visibility = values["visibility"];
+        selectedInsurer.visibility = values["visibilityPublic"] ? [] : values["visibility"];
         setSelectedInsurer(undefined);
     }
     const cancelInsurerEditDialog = () => {
