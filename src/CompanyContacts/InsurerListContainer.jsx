@@ -31,9 +31,9 @@ const InsurerListContainer = observer(({props}) => {
 					)}
 					{insurerModel.currentPage.totalPages > 1 &&
 					 <Pagination
-							 onChange={(event, page) => insurerModel.changeToPage(page)}
-							 count={insurerModel.currentPage.totalPages} showFirstButton={!insurerModel.currentPage.first}
-							 showLastButton={!insurerModel.currentPage.last}/>
+							 onChange={(event, page) => insurerModel.changeToPage(page - 1)}
+							 page={insurerModel.currentPage.page + 1} count={insurerModel.currentPage.totalPages}
+							 showFirstButton={!insurerModel.currentPage.first} showLastButton={!insurerModel.currentPage.last}/>
 					}
 					{isManager() &&
 					 <Grid container justify="flex-end">

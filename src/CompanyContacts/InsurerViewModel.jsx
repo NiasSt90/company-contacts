@@ -21,14 +21,14 @@ class InsurerViewModel {
             first:result.first, last:result.last};
     }
     changeToPage(page) {
-        this.currentPage.page = page - 1;
-        this.search(this.searchText);
+        this.search(this.searchText, page);
     }
 
     //	@action
-    search(searchText) {
+    search(searchText, page= 0) {
+        this.currentPage.page = page;
         if (!searchText || searchText.trim().length === 0) {
-            this.showAll();
+            this.showAll(page);
             return;
         }
         this.activityHandler.onStart();
@@ -43,9 +43,22 @@ class InsurerViewModel {
     }
 
     //	@action
+    showAll(page=0) {
+        this.activityHandler.onStart();
+        this.currentPage.page = page;
+        this.contactsApi.index(this.currentPage).then(
+              action("fetchSuccess", result => {
+                  this.onResults(result);
+              }),
+              action("fetchError", error => {
+                  this.activityHandler.onError(error);
+              }));
+    }
+
+    //	@action
     add(newInsurer) {
         this.activityHandler.onStart();
-        return this.contactsApi.post(newInsurer).then(
+        return this.contactsApi.post(newInsurer.serialize()).then(
             action("addSuccess", result => {
                 this.activityHandler.onSuccess("neuen Versicherer " + newInsurer.name + " angelegt.");
                 newInsurer.id = result;
@@ -76,7 +89,7 @@ class InsurerViewModel {
             return;
         }
         this.activityHandler.onStart();
-        this.contactsApi.put(insurer.id, insurer).then(
+        this.contactsApi.put(insurer.id, insurer.serialize()).then(
             action("saveSuccess", result => {
                 this.activityHandler.onSuccess("Versicherer " + insurer.name + " gespeichert")
             }),
@@ -102,18 +115,6 @@ class InsurerViewModel {
         this.activityHandler.onStart();
         return Promise.resolve(new Insurer("Neuer Versicherer"))
               .finally(() => this.activityHandler.onSuccess());
-    }
-
-//	@action
-    showAll() {
-        this.activityHandler.onStart();
-        this.contactsApi.index(this.currentPage).then(
-            action("fetchSuccess", result => {
-                this.onResults(result);
-            }),
-            action("fetchError", error => {
-                this.activityHandler.onError(error);
-            }));
     }
 }
 
