@@ -1,7 +1,8 @@
-import {decorate, observable} from 'mobx'
+import {computed, decorate, observable} from 'mobx'
 import {Address} from "./Address";
 import {InsuranceClass} from "./InsuranceClass";
 import {FileDocument} from "./FileDocument";
+import settings from "../../settings";
 
 export class Insurer {
 
@@ -11,7 +12,10 @@ export class Insurer {
 
     hints = ''
 
+    //deprecated
     imgDataURL
+
+    imgBlobID
 
     address = new Address();
 
@@ -43,6 +47,9 @@ export class Insurer {
         this.documents = this.documents.filter(x => x !== document);
     }
 
+    get imageUrl() {
+        return this.imgBlobID !== "" ? settings.REST_API_CONTACTS + "/blobs/" + this.imgBlobID + "?inline=true" : this.imgDataURL !== "" ? this.imgDataURL : undefined;
+    }
 
     // this two methods will serialize and deserialize the insurer
     // to keep the example clean I have done them, but you should consider using
@@ -53,6 +60,7 @@ export class Insurer {
             name: this.name,
             hints: this.hints,
             imgDataURL: this.imgDataURL,
+            imgBlobID: this.imgBlobID,
             address: this.address.serialize(),
             insuranceClasses: this.insuranceClasses.map(insuranceClass => insuranceClass.serialize()),
             documents: this.documents.map(doc => doc.serialize()),
@@ -65,6 +73,7 @@ export class Insurer {
         insurer.name = json['name'] || ''
         insurer.hints = json['hints'] || ''
         insurer.visibility = json['visibility'] || []
+        insurer.imgBlobID = json['imgBlobID'] || ''
         insurer.imgDataURL = json['imgDataURL'] || ''
         insurer.address = Address.deserialize(json['address'])
         insurer.insuranceClasses = json['insuranceClasses'] ? json['insuranceClasses'].map(insuranceClass => InsuranceClass.deserialize(insuranceClass)) : []
@@ -79,4 +88,6 @@ decorate(Insurer, {
     visibility: observable,
     insuranceClasses: observable,
     documents: observable,
+    imgBlobID: observable,
+    imageUrl: computed
 })

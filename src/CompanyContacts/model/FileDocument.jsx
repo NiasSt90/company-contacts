@@ -1,5 +1,4 @@
 import {decorate, observable} from "mobx";
-import settings from "../../settings";
 
 export class FileDocument {
 	id
@@ -7,8 +6,11 @@ export class FileDocument {
 	contentType
 	file
 
-	link() {
-		return settings.REST_API_CONTACTS + "/blobs/" + this.id;
+
+	constructor(file, name, type) {
+		this.file = file;
+		this.name = name;
+		this.contentType = type;
 	}
 
 	serialize() {

@@ -18,6 +18,10 @@ import Chip from "@material-ui/core/Chip";
 import MenuItem from "@material-ui/core/MenuItem";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import {useStores} from "../../hooks/useStores";
+import {FileDocument} from "../model/FileDocument";
+import {action} from "mobx";
+import settings from "../../settings";
 
 const vertriebe = ["DPC", "PKM", "FBD", "IMPACT", "ForumFinanz"]//ACHTUNG: keycloak "Gruppen"
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 	const classes = useStyles();
+	const { documentModel } = useStores();
 	const [values, setValues] = React.useState({
 		name: insurer.name,
 		street: insurer.address.street,
@@ -42,10 +47,12 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 		city: insurer.address.city,
 		hints: insurer.hints,
 		imgDataURL: insurer.imgDataURL,
-		imgURL: undefined,
+		imgBlobID: insurer.imgBlobID,
 		visibility: insurer.visibility,
 		visibilityPublic: insurer.visibility.length === 0,
 	})
+	const imageUrl = values.imgBlobID !== "" ? settings.REST_API_CONTACTS + "/blobs/" + values.imgBlobID : values.imgDataURL !== "" ? values.imgDataURL : undefined;
+
 	const handleInputChange = e => {
 		const {name, value} = e.target
 		setValues({...values, [name]: value})
@@ -67,17 +74,8 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 			alert("Die gewählte Datei ist zu groß um als Icon verwendet zu werden...maximal sind 30kb erlaubt.")
 			return false;
 		}
-		let objectURL = URL.createObjectURL(event.target.files[0]);
-		console.log(objectURL);
-		(async function() {
-			let blob = await fetch(objectURL).then(r => r.blob());
-			let dataUrl = await new Promise(resolve => {
-					let reader = new FileReader();
-					reader.onload = () => resolve(reader.result);
-					reader.readAsDataURL(blob);
-				});
-			setValues({...values, imgURL: objectURL, imgDataURL: dataUrl});
-		})();
+		documentModel.uploadFile(new FileDocument(file, file.name, file.type))
+				.then(action("UploadSuccess", document => setValues({...values, imgBlobID: document.id})))
 	}
 	return <Dialog open={open} onClose={handleCancel}>
 		<DialogTitle id="InsurerEditorDialog">Versicherer bearbeiten</DialogTitle>
@@ -85,7 +83,7 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 			<FormGroup row className={classes.formGroup}>
 				<FormControl>
 					<FormLabel>Icon</FormLabel>
-					{values.imgDataURL && <img alt="icon" src={values.imgDataURL ? values.imgDataURL : values.imgURL} width="128px" />}
+					{imageUrl && <img alt="icon" src={imageUrl} width="128px" />}
 					<InputBase onChange={handleFileUpload} type="file" accept="image/*"  placeholder="Versicherer Icon"/>
 					<FormHelperText>Versicherer - Icon</FormHelperText>
 				</FormControl>

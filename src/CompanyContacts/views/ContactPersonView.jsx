@@ -6,7 +6,6 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
-import {makeStyles} from "@material-ui/core/styles";
 import MailIcon from '@material-ui/icons/Mail';
 import PhoneIcon from '@material-ui/icons/Phone';
 import PrintIcon from '@material-ui/icons/Print';
@@ -22,22 +21,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {useRoles} from "../../hooks/useRoles";
 import {useConfirmation} from "../../utils/ConfirmationService";
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: '100%',
-		maxWidth: '36ch',
-		backgroundColor: theme.palette.background.paper,
-		'& span': {
-			margin: theme.spacing(0, 0.5),
-		},
-	},
-	inline: {
-		display: 'inline',
-	},
-}));
-
 const ContactPersonView = observer(({person, onEdit, onDelete}) => {
-	const classes = useStyles();
 	const {isManager} = useRoles();
 	const confirm = useConfirmation();
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);

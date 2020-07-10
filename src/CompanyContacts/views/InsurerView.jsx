@@ -34,7 +34,7 @@ import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import InsurerEditor from "./InsurerEditor";
-import {useHistory, useLocation} from "react-router";
+import {useHistory} from "react-router";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -61,6 +61,7 @@ const InsurerView = observer(({insurer, expanded}) => {
 
     const [selectedInsurer, setSelectedInsurer] = React.useState(undefined);
     const confirmInsurerEditDialog = (values) => {
+        const oldImgBlobID = selectedInsurer.imgBlobID;
         selectedInsurer.name = values["name"];
         selectedInsurer.address.street = values["street"];
         selectedInsurer.address.number = values["number"];
@@ -68,7 +69,12 @@ const InsurerView = observer(({insurer, expanded}) => {
         selectedInsurer.address.city = values["city"];
         selectedInsurer.hints = values["hints"];
         selectedInsurer.imgDataURL = values["imgDataURL"];
+        selectedInsurer.imgBlobID = values["imgBlobID"];
         selectedInsurer.visibility = values["visibilityPublic"] ? [] : values["visibility"];
+        insurerModel.save(selectedInsurer);
+        if (oldImgBlobID !== "" && oldImgBlobID !== selectedInsurer.imgBlobID) {
+            documentModel.blobsApi.del(oldImgBlobID);
+        }
         setSelectedInsurer(undefined);
     }
     const cancelInsurerEditDialog = () => {
@@ -112,7 +118,6 @@ const InsurerView = observer(({insurer, expanded}) => {
     }
     const handleAddDocument = () => {
         let fileDocument = new FileDocument();
-        documentModel.selectDocument(fileDocument);
         setNewDocument(fileDocument)
     }
     //Dokument-DELETE
@@ -123,7 +128,7 @@ const InsurerView = observer(({insurer, expanded}) => {
             description: "Die Aktion kann nicht rückgängig gemacht werden...."
         }).then(() => {
             if (document.id !== undefined) {
-                documentModel.delete(document);
+                documentModel.delete(document.id);
             }
             insurer.delDocument(document);
             insurerModel.save(insurer);
@@ -144,8 +149,8 @@ const InsurerView = observer(({insurer, expanded}) => {
                             <CardContent>
                                 <div className={classes.section1}>
                                     <Link to={{ pathname: "/insurer/" + insurer.id}}>
-                                        {insurer.imgDataURL ?
-                                          <Typography component="img" src={insurer.imgDataURL}/> :
+                                        {insurer.imageUrl ?
+                                          <Typography component="img" src={insurer.imageUrl}/> :
                                           <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
                                         }
                                     </Link>

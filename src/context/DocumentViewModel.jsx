@@ -10,37 +10,15 @@ class DocumentViewModel {
 		this.activityHandler = activityHandler;
 	}
 
-	selectDocument(document) {
-		this.selectedDocument = document;
-	}
-
-	handleFileSelect = (event) => {
-		const file = event.target.files[0];
-		if (file) {
-			this.selectedDocument.file = file;
-			this.selectedDocument.name = file.name;
-			this.selectedDocument.contentType = file.type;
-		}
-		else {
-			this.selectedDocument.file = undefined;
-			this.selectedDocument.name = "";
-			this.selectedDocument.contentType = "";
-		}
-	}
-
-	handleNameChange = (event) => {
-		this.selectedDocument.name = event.target.value;
-	}
-
-	uploadFile() {
+	uploadFile(document) {
 		this.activityHandler.onStart();
 		var formData = new FormData();
-		formData.append(`file`, this.selectedDocument.file);
+		formData.append(`file`, document.file);
 		return this.blobsApi.upload(formData).then(
 				action("uploadSuccess", result => {
 					this.activityHandler.onSuccess();
-					this.selectedDocument.id = result;
-					return this.selectedDocument;
+					document.id = result;
+					return document;
 				}),
 				action("uploadError", error => {
 					this.activityHandler.onError(error);
@@ -59,9 +37,9 @@ class DocumentViewModel {
 				}));
 	}
 
-	delete(document) {
+	delete(id) {
 		this.activityHandler.onStart();
-		this.blobsApi.del(document.id).then(
+		this.blobsApi.del(id).then(
 				action("OnSuccess", success => {
 					this.activityHandler.onSuccess("Dokument erfolgreich gelöscht!")
 				}),

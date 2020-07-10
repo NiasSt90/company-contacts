@@ -25,7 +25,6 @@ import {ContactLink} from "../model/ContactLink";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
-import {useStores} from "../../hooks/useStores";
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -67,6 +66,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 			selectedPerson[key] = values[key];
 		})
 		insurer.insuranceClasses[selectedTab].addPerson(selectedPerson);
+		model.save(insurer);
 		setSelectedPerson(undefined);
 	}
 	const handlePersonDelete = (person) => {
@@ -74,6 +74,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		if (insurer.insuranceClasses[selectedTab].isEmpty()) {
 			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
 		}
+		model.save(insurer);
 	}
 	//LINKS-Editor
 	const [selectedLink, setSelectedLink] = React.useState(undefined);
@@ -88,6 +89,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 			selectedLink[key] = values[key];
 		})
 		insurer.insuranceClasses[selectedTab].addLink(selectedLink);
+		model.save(insurer);
 		setSelectedLink(undefined);
 	}
 	const handleLinkDelete = (link) => {
@@ -95,6 +97,7 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		if (insurer.insuranceClasses[selectedTab].isEmpty()) {
 			insurer.delInsuranceClass(insurer.insuranceClasses[selectedTab])
 		}
+		model.save(insurer);
 	}
 
 	//SECTION ADD
