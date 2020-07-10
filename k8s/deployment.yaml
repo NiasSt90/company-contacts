@@ -30,6 +30,7 @@ metadata:
     component: react
     stage: prod
     customer: bvo
+    git: ${GERRIT_NEWREV}
 spec:
   replicas: 1
   selector:
