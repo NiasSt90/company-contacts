@@ -1,0 +1,36 @@
+= Produktgeber-UI App
+
+== Lokal starten
+
+Die Datei `.env.development.local` erzeugen und dort die gewünschte Umgebung definieren. Z.B
+[source,env]
+----
+#change to override with local service urls
+PORT=8080
+
+#Local-Intentus
+REACT_APP_REST_API_CONTACTS=http://$HOST:8015
+REACT_APP_KEYCLOAK_AUTH_SERVER_URL=http://$HOST:8002/auth
+REACT_APP_KEYCLOAK_REALM=Barmenia-Develop
+
+#PRODUCTION
+#REACT_APP_REST_API_CONTACTS=https://...
+#REACT_APP_KEYCLOAK_AUTH_SERVER_URL=https://...
+#REACT_APP_KEYCLOAK_REALM=...
+----
+
+Danach normal starten via IntelliJ-IDEA Integration oder ähnliche Variante...
+
+== Docker Build
+
+z.B. via
+....
+# docker build -t nexus-docker.onesty-tech.de/bvo-contacts-ui --build-arg GIT_COMMIT=$(git rev-parse HEAD) --build-arg GIT_VERSION="$(git log --pretty='format:%h %s' -q -1)" .
+....
+
+== Deploy
+
+via Jenkins "Bauen mit Parametern"
+
+== manueller Aufruf
+https://bvo-preview1.onesty-tech.de
