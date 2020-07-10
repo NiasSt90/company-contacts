@@ -58,7 +58,9 @@ podTemplate(label: label,
 					}
 					if (env.DEPLOY_TARGET_STAGE && (env.DEPLOY_TARGET_STAGE == 'live only' || env.DEPLOY_TARGET_STAGE == 'all available')) {
 						//Deploy to K8s
-						kubernetesDeploy configs: 'k8s/*.yaml', kubeconfigId: 'JENKINS_K8S_CONFIG', enableConfigSubstitution: true
+						withEnv(["GIT_VERSION="+gitCommitHash]) {
+							kubernetesDeploy configs: 'k8s/*.yaml', kubeconfigId: 'JENKINS_K8S_CONFIG', enableConfigSubstitution: true
+						}
 						office365ConnectorSend message: "Project:" + currentBuild.displayName + ', git-rev: ' + currentBuild.description, status:"Deployed to LIVE", webhookUrl: 'https://outlook.office.com/webhook/d19bdeb0-1d82-48ca-985c-0828803de2b3@0d7025ff-e3e6-45ee-a39d-3353420f7fdc/JenkinsCI/40bda29332b44d0eb4703258488d3db7/f26c77a0-986c-4821-bda2-87a828c9d144'
 					}
 				}
