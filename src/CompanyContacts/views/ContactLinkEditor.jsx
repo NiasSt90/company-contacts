@@ -6,6 +6,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
 
 const ContactLinkEditor = ({link, open, onSave, onCancel}) => {
 	const [values, setValues] = React.useState({
@@ -23,9 +24,17 @@ const ContactLinkEditor = ({link, open, onSave, onCancel}) => {
 			<DialogContentText>
 				Link bearbeiten...
 			</DialogContentText>
-			<TextField label="Name" type="text" value={values.name} name="name" onChange={handleInputChange}/>
-			<TextField label="URL" type="text" value={values.url} name="url" onChange={handleInputChange}/>
-			<TextField label="Beschreibung" type="text" value={values.description} name="description" onChange={handleInputChange}/>
+			<Grid container spacing={2} >
+				<Grid item>
+					<TextField label="Name" type="text" value={values.name} name="name" onChange={handleInputChange}/>
+				</Grid>
+				<Grid item>
+					<TextField label="URL" type="text" value={values.url} name="url" onChange={handleInputChange}/>
+				</Grid>
+				<Grid item>
+					<TextField label="Beschreibung" type="text" value={values.description} name="description" onChange={handleInputChange}/>
+				</Grid>
+			</Grid>
 		</DialogContent>
 		<DialogActions>
 			<Button onClick={onCancel} color="secondary" variant="contained">Abbrechen</Button>

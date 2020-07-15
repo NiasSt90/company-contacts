@@ -20,6 +20,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import {useStores} from "./hooks/useStores";
 import {useHistory} from "react-router";
 import HomeIcon from '@material-ui/icons/Home';
+import {ArrowBack, Brightness4, Brightness7} from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
 	grow: {
@@ -37,9 +38,9 @@ const useStyles = makeStyles(theme => ({
 	search: {
 		position: 'relative',
 		borderRadius: theme.shape.borderRadius,
-		backgroundColor: fade(theme.palette.common.white, 0.15),
+		backgroundColor: fade(theme.palette.common.black, 0.25),
 		'&:hover': {
-			backgroundColor: fade(theme.palette.common.white, 0.25),
+			backgroundColor: fade(theme.palette.common.black, 0.50),
 		},
 		marginRight: theme.spacing(2),
 		marginLeft: 0,
@@ -98,14 +99,14 @@ const MyAppBar = observer(({props}) => {
 	return <div className={classes.grow}>
 		<AppBar position="static">
 			<Toolbar>
-				<IconButton edge="start" className={classes.menuButton} color="inherit" onClick={() => history.push("/")}>
-					<HomeIcon/>
+				<IconButton edge="start" className={classes.menuButton} onClick={() => history.push("/")}>
+					{toolbarHandler.showSearch && <HomeIcon color={'secondary'}/>}
+					{!toolbarHandler.showSearch && <ArrowBack color={'secondary'}/>}
 				</IconButton>
-				<Typography className={classes.title} variant="h6" noWrap>{toolbarHandler.title}</Typography>
+				<Typography className={classes.title} variant="h6" color={'secondary'} noWrap>{toolbarHandler.title}</Typography>
 				{toolbarHandler.showSearch && <div className={classes.search}>
-					<div className={classes.searchIcon}><SearchIcon/></div>
+					<div className={classes.searchIcon}><SearchIcon color={'secondary'}/></div>
 					<InputBase onChange={toolbarHandler.searchAction} placeholder="Suchen…" classes={{
-									  root: classes.inputRoot,
 									  input: classes.inputInput,
 								  }}
 					/>
@@ -113,27 +114,29 @@ const MyAppBar = observer(({props}) => {
 				<div className={classes.grow}/>
 				<div className={classes.sectionDesktop}>
 					{toolbarHandler.showDefaultActions && <>
-					<Tooltip title="Theme wechseln"><Switch checked={themeStore.darkState} onChange={themeStore.handleThemeChange}/></Tooltip>
+						<Tooltip title="Theme wechseln">
+							<Switch checked={themeStore.darkState} icon={<Brightness7 color={'secondary'}/>} checkedIcon={<Brightness4 color={'secondary'} />} onChange={themeStore.handleThemeChange}/>
+						</Tooltip>
 					{!authenticated() &&
 					 <Tooltip title="Anmelden...">
-						 <IconButton edge="end" onClick={() => login()} color="inherit"><LockOpenIcon/></IconButton>
+						 <IconButton edge="end" onClick={() => login()} ><LockOpenIcon color={'secondary'}/></IconButton>
 					 </Tooltip>
 					}
 					{authenticated() &&
 					 <Tooltip title={"Angemeldet als " + authStore.name}>
-						 <IconButton edge="end" onClick={() => logout()} color="inherit"><LockIcon/></IconButton>
+						 <IconButton edge="end" onClick={() => logout()}><LockIcon color={'secondary'}/></IconButton>
 					 </Tooltip>
 					}
 					</>}
 					{toolbarHandler.actions.map(({name, label, icon, ...rest}) => (
 							<Tooltip key={name} title={label}>
-								<IconButton edge="end" color="inherit" {...rest}>{icon}</IconButton>
+								<IconButton color={'secondary'} edge="end"  {...rest}>{icon}</IconButton>
 							</Tooltip>
 					))}
 				</div>
 				<div className={classes.sectionMobile}>
 					<IconButton onClick={handleMobileMenuOpen} color="inherit">
-						<MoreIcon/>
+						<MoreIcon color={'secondary'}/>
 						{/*TODO: ...Menu muss noch  implementiert werden*/}
 					</IconButton>
 				</div>

@@ -48,7 +48,7 @@ export class Insurer {
     }
 
     get imageUrl() {
-        return this.imgBlobID !== "" ? settings.REST_API_CONTACTS + "/blobs/" + this.imgBlobID + "?inline=true" : this.imgDataURL !== "" ? this.imgDataURL : undefined;
+        return this.imgBlobID !== undefined ? settings.REST_API_CONTACTS + "/blobs/" + this.imgBlobID + "?inline=true" : this.imgDataURL;
     }
 
     // this two methods will serialize and deserialize the insurer

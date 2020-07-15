@@ -20,8 +20,24 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {useRoles} from "../../hooks/useRoles";
 import {useConfirmation} from "../../utils/ConfirmationService";
+import {Divider} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+
+
+const useStyles = makeStyles((theme) => ({
+	primaryHead: {
+		color: theme.palette.text.header,
+	},
+	icon: {
+		marginRight: theme.spacing(1),
+		float: 'left',
+		fontSize: "medium",
+	},
+}));
 
 const ContactPersonView = observer(({person, onEdit, onDelete}) => {
+	const classes = useStyles();
 	const {isManager} = useRoles();
 	const confirm = useConfirmation();
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
@@ -42,34 +58,37 @@ const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 	};
 
 	return <>
-		<ListItem>
+		<ListItem alignItems={"flex-start"}>
 			<ListItemAvatar>
 				<Avatar>{person.name.charAt(0)}</Avatar>
 			</ListItemAvatar>
 			<ListItemText
-					primary={<Typography><strong>{person.topic}</strong> {person.name}</Typography>}
+					primary={<Typography className={classes.primaryHead}><strong>{person.topic}: </strong> {person.name}</Typography>}
 					secondary={
-						<Box display="flex" component="span">
-							{person.mail && <Box flexGrow={1} component="span">
-								<MailIcon/><Typography component="a" variant="subtitle2" color="textPrimary"
-															  href={'mailto:' + person.mail}>{person.mail}</Typography>
-							</Box>}
-							{person.phone && <Box flexGrow={1} component="span">
-								<PhoneIcon/>
-								<Typography component="span" variant="body2"
-												color="textPrimary">{person.phone}</Typography>
-							</Box>}
-							{person.cellPhone && <Box flexGrow={1} component="span">
-								<SmartphoneIcon/>
-								<Typography component="span" variant="body2"
-												color="textPrimary">{person.cellPhone}</Typography>
-							</Box>}
-							{person.fax && <Box flexGrow={1} component="span">
-								<PrintIcon/>
-								<Typography component="span" variant="body2"
-												color="textPrimary">{person.fax}</Typography>
-							</Box>}
-						</Box>
+
+						<Grid container spacing={1} >
+
+								{person.mail && <Grid item xs={12} md={6}>
+									<MailIcon className={classes.icon}/>
+									<Typography component="a" variant="subtitle2" className={classes.primaryHead} fontSize="small"
+													href={'mailto:' + person.mail}>{person.mail}</Typography>
+								</Grid>}
+								{person.phone && <Grid item xs={12} md={6}>
+									<PhoneIcon className={classes.icon}/>
+									<Typography component="span" variant="body2"
+													fontSize="small">{person.phone}</Typography>
+								</Grid>}
+								{person.cellPhone && <Grid item xs={12} md={6}>
+									<SmartphoneIcon className={classes.icon}/>
+									<Typography component="span" variant="body2"
+													fontSize="small">{person.cellPhone}</Typography>
+								</Grid>}
+								{person.fax && <Grid item xs={12} md={6}>
+									<PrintIcon className={classes.icon}/>
+									<Typography component="span" variant="body2"
+													fontSize="small">{person.fax}</Typography>
+								</Grid>}
+							</Grid>
 					}
 			/>
 			{isManager() &&
@@ -86,8 +105,10 @@ const ContactPersonView = observer(({person, onEdit, onDelete}) => {
 					 </MenuItem>
 				 </Menu>
 			 </ListItemSecondaryAction>
+
 			}
 		</ListItem>
+		<Divider variant="inset" component="li" />
 	</>
 });
 

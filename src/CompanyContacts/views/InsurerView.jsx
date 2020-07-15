@@ -1,9 +1,6 @@
 /*@observer*/
 import React from "react";
 import {observer} from "mobx-react";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -11,7 +8,6 @@ import SaveIcon from '@material-ui/icons/Save';
 import IconButton from "@material-ui/core/IconButton";
 import Typography from '@material-ui/core/Typography';
 import Grid from "@material-ui/core/Grid";
-import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
 import Divider from '@material-ui/core/Divider';
 import InsuranceClassesView from "./InsuranceClassesView";
 import Card from "@material-ui/core/Card";
@@ -35,19 +31,44 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import InsurerEditor from "./InsurerEditor";
 import {useHistory} from "react-router";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionActions from "@material-ui/core/AccordionActions";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        margin: theme.spacing(1, 1),
+        margin: theme.spacing(2, 2, 1, 2)
+    },
+
+	card: {
+		height:"100%",
+		padding: 0,
+	},
+	cardContent: {
+		padding: 0,
+	},
+	 h2: {
+		marginBottom: 0,
+	 },
+	 rightBorder:{
+
+		borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+	 },
+    headTextColor: {
+    },
+	 accordion: {
+        backgroundColor:theme.palette.background.header,
     },
     section1: {
-        margin: theme.spacing(3, 2),
+        margin: theme.spacing(3),
     },
     section2: {
-        margin: theme.spacing(2),
+        margin: theme.spacing(3),
+		  color: theme.palette.text.header,
     },
     section3: {
-        margin: theme.spacing(3, 1, 1),
+        margin: theme.spacing(3),
         '& pre': {
             whiteSpace: "pre-wrap"
         }
@@ -138,37 +159,36 @@ const InsurerView = observer(({insurer, expanded}) => {
 
 
     return <div className={classes.root}>
-        <ExpansionPanel defaultExpanded={expanded}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-                <Grid container spacing={2} alignItems="stretch" justify="center">
+        <Accordion  defaultExpanded={expanded} className={classes.accordion} >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} className={classes.headTextColor}>
+                <Typography gutterBottom variant="h5" component="h2" className={classes.h2}>{insurer.name}</Typography>
+				</AccordionSummary>
+            <AccordionDetails>
+                <Grid container spacing={3} alignItems="stretch" justify="center" className={classes.grid}>
                     <Grid item xs={12} md={6}>
-                        <Card elevation={2}>
-                            <CardContent>
+                        <Card className={classes.card}>
+                            <CardContent className={classes.cardContent}>
                                 <div className={classes.section1}>
                                     <Link to={{ pathname: "/insurer/" + insurer.id}}>
-                                        {insurer.imageUrl ?
+                                        {insurer.imageUrl !== "" ?
                                           <Typography component="img" src={insurer.imageUrl}/> :
-                                          <Typography gutterBottom variant="h5" component="h2">{insurer.name}</Typography>
+                                          <Typography gutterBottom>{insurer.name}</Typography>
                                         }
                                     </Link>
                                 </div>
                                 <div className={classes.section2}>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                        <strong>{insurer.address.street} {insurer.address.number}</strong><br/>
-                                        <strong>{insurer.address.zipCode} {insurer.address.city}</strong><br/>
+                                    <Typography variant="h6" component="p">
+                                        {insurer.address.street} {insurer.address.number}<br/>
+                                        {insurer.address.zipCode} {insurer.address.city}<br/>
                                     </Typography>
                                 </div>
-                                <Divider variant="middle"/>
                                 <div className={classes.section3}>
-                                    <Typography component="pre" gutterBottom>{insurer.hints}</Typography>
+                                    <Typography component="pre" gutterBottom color={"textSecondary"} >{insurer.hints}</Typography>
                                 </div>
                                 {insurer.documents.length > 0 && <>
                                     <Divider/>
                                     <List>{insurer.documents.map((doc, i) =>
-                                              <ListItem key={i} component={Link} to={"/download/" + doc.id} button onClick={(e) => download(e, doc.id)}>
+                                              <ListItem key={i} className={classes.headTextColor} component={Link} to={"/download/" + doc.id} button onClick={(e) => download(e, doc.id)}>
                                                   <ListItemIcon>
                                                       {"application/pdf" === doc.contentType ? <PictureAsPdfIcon/> : <CloudDownloadIcon/>}
                                                   </ListItemIcon>
@@ -183,10 +203,11 @@ const InsurerView = observer(({insurer, expanded}) => {
                                 </>
                             }
                             </CardContent>
+									<Divider />
                             {isManager() &&
-                             <CardActions disableSpacing>
-                                 <Button color="primary" startIcon={<EditIcon/>} onClick={() => setSelectedInsurer(insurer)}>Bearbeiten</Button>
-                                 <Button color="primary" startIcon={<CloudUploadIcon/>} onClick={handleAddDocument}>Dokument</Button>
+									  <CardActions disableSpacing>
+                                 <Button variant={'text'} color={'primary'} startIcon={<EditIcon/>} onClick={() => setSelectedInsurer(insurer)}>Bearbeiten</Button>
+                                 <Button variant={'text'} color={'primary'} startIcon={<CloudUploadIcon/>} onClick={handleAddDocument}>Dokument</Button>
                                  {newDocument !== undefined &&
                                   <DocumentUploader open document={newDocument} onSave={handleSaveDocument} onCancel={handleCancelAddDocument}/>
                                  }
@@ -198,18 +219,17 @@ const InsurerView = observer(({insurer, expanded}) => {
                         <InsuranceClassesView model={insurerModel} insurer={insurer}/>
                     </Grid>
                 </Grid>
-            </ExpansionPanelDetails>
-            <Divider/>
+				</AccordionDetails>
             {isManager() &&
-             <ExpansionPanelActions>
+             <AccordionActions>
                  {insurer.id !== undefined && <>
-                    <Button color="primary" startIcon={<SaveIcon/>} onClick={insertOrUpdateInsurer}>Speichern</Button>
-                    <Button color="primary" startIcon={<DeleteIcon/>} onClick={tryToDeleteInsurer}>Löschen</Button>
+                    <Button color="primary" variant={'contained'} startIcon={<SaveIcon/>} onClick={insertOrUpdateInsurer}>Speichern</Button>
+                    <Button color="secondary" variant={'contained'} startIcon={<DeleteIcon/>} onClick={tryToDeleteInsurer}>Löschen</Button>
                  </>}
                  {insurer.id === undefined && <Button color="primary" startIcon={<SaveIcon/>} onClick={insertOrUpdateInsurer}>Anlegen</Button>}
-             </ExpansionPanelActions>
+				 </AccordionActions>
             }
-        </ExpansionPanel>
+		  </Accordion>
 
         {selectedInsurer !== undefined &&
          <InsurerEditor open insurer={selectedInsurer} onSave={confirmInsurerEditDialog} onCancel={cancelInsurerEditDialog}/>

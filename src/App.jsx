@@ -38,11 +38,11 @@ const App = observer(() => {
 								<MyAppBar/>
 								{authStore.token ?
 								 <Switch>
-									 <Route exact path='/'><InsurerListContainer/></Route>
-									 <Route exact path='/insurer'><InsurerContainer/></Route>
-									 <Route path='/insurer/:id'><InsurerContainer/></Route>
-									 <Route path='/download/:id'><DownloadContainer/></Route>
-								 </Switch>
+								 <Route exact path='/'><InsurerListContainer/></Route>
+									<Route exact path='/insurer'><InsurerContainer/></Route>
+									<Route path='/insurer/:id'><InsurerContainer/></Route>
+									<Route path='/download/:id'><DownloadContainer/></Route>
+									</Switch>
 								 : <Container maxWidth={"xs"}><Typography variant="h5">Sie sind nicht angemeldet</Typography></Container>
 								}
 							</ConfirmationServiceProvider>

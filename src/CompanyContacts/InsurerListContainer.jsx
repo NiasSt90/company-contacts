@@ -20,7 +20,7 @@ const InsurerListContainer = observer(({props}) => {
 				toolbarHandler.changeToolbar({title: "Produktpartner - App", showSearch: true, showDefaultActions: true,
 					searchAction: (event) => insurerModel.search(event.target.value),
 					actions: [
-						{name: "Reload", label: "Neu laden",icon: <RefreshIcon/>, onClick:() => insurerModel.showAll()}
+						{name: "Reload", label: "Neu laden",icon: <RefreshIcon color={'secondary'}/>, onClick:() => insurerModel.showAll()}
 					]});
 				insurerModel.showAll();
 			}, [insurerModel, toolbarHandler]);
@@ -38,7 +38,7 @@ const InsurerListContainer = observer(({props}) => {
 					{isManager() &&
 					 <Grid container justify="flex-end">
 						 <Box mr={2}>
-							 <Fab size="medium" color="secondary">
+							 <Fab size="medium" >
 								 <AddIcon onClick={() => history.push("/insurer")}/>
 							 </Fab>
 						 </Box>

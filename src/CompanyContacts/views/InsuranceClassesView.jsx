@@ -1,7 +1,6 @@
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AddIcon from "@material-ui/icons/Add";
-import Paper from "@material-ui/core/Paper";
 import React from "react";
 import ContactPersonView from "./ContactPersonView";
 import Button from "@material-ui/core/Button";
@@ -25,6 +24,20 @@ import {ContactLink} from "../model/ContactLink";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
+import {makeStyles} from "@material-ui/core/styles";
+import Divider from "@material-ui/core/Divider";
+
+
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		height:"100%",
+		padding: 0,
+	},
+	cardContent: {
+		padding: 0,
+	},
+}));
 
 function TabPanel(props) {
 	const {children, value, index, ...other} = props;
@@ -47,6 +60,7 @@ TabPanel.propTypes = {
 
 
 const InsuranceClassesView = observer(({model, insurer}) => {
+	const classes = useStyles();
 	const {isManager} = useRoles();
 	// Section-TAB
 	const [selectedTab, setSelectedTab] = React.useState(0);
@@ -115,14 +129,13 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 		handleCloseDialog();
 	}
 
-	return <Card style={{height:"100%"}} elevation={2}>
-		<CardContent>
-			<Paper square>
-				<Tabs value={selectedTab} onChange={changeSelectedTab} variant={"scrollable"} scrollButtons={"auto"}>
+	return <Card className={classes.root}>
+		<CardContent className={classes.cardContent}>
+				<Tabs value={selectedTab} onChange={changeSelectedTab} variant={"scrollable"} scrollButtons={"auto"} indicatorColor={"primary"}>
 					{insurer.insuranceClasses.map(
 							(insuranceClass, i) => <Tab key={i} label={insuranceClass.className}/>)}
 				</Tabs>
-			</Paper>
+			<Divider/>
 			{insurer.insuranceClasses.map((insuranceClass, i) =>
 					<TabPanel value={selectedTab} key={i} index={i}>
 						<List>
@@ -138,13 +151,14 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 					</TabPanel>)
 			}
 			{insurer.insuranceClasses.length === 0 &&
-			 <Box textAlign="center" fontStyle="oblique" fontWeight="fontWeightLight">Legen Sie zuerst einen Bereich
+			 <Box textAlign="center" fontStyle="oblique" fontWeight="fontWeightLight" p={2}>Legen Sie zuerst einen oder mehrere Bereiche
 				 an...</Box>
 			}
 		</CardContent>
+		<Divider/>
 		{isManager() && <>
 			<CardActions>
-				<Button color="primary" startIcon={<AddIcon/>} onClick={handleOpenDialog}>Bereich</Button>
+				<Button variant={'text'} color={'primary'} startIcon={<AddIcon/>} onClick={handleOpenDialog}>Bereich</Button>
 				{selectedPerson !== undefined &&
 				 <ContactPersonEditor open person={selectedPerson}
 											 onSave={handleSavePerson} onCancel={() => handleSelectPerson(undefined)}/>
@@ -155,8 +169,8 @@ const InsuranceClassesView = observer(({model, insurer}) => {
 				}
 				{insurer.insuranceClasses.length > 0 &&
 				 <>
-					 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt</Button>
-					 <Button color="primary" startIcon={<AddIcon/>} onClick={handleAddLink}>Link</Button>
+					 <Button variant={'text'} color={'primary'} startIcon={<AddIcon/>} onClick={handleAddPerson}>Kontakt</Button>
+					 <Button variant={'text'} color={'primary'} startIcon={<AddIcon/>} onClick={handleAddLink}>Link</Button>
 				 </>
 				}
 			</CardActions>

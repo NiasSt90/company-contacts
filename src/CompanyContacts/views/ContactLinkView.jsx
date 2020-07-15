@@ -1,6 +1,7 @@
 import React from "react";
 import {observer} from "mobx-react";
 import DeleteIcon from '@material-ui/icons/Delete';
+import LinkIcon from '@material-ui/icons/Link';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
@@ -14,8 +15,16 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Link from "@material-ui/core/Link";
 import {useConfirmation} from "../../utils/ConfirmationService";
+import {makeStyles} from "@material-ui/core/styles";
 
+
+const useStyles = makeStyles((theme) => ({
+	primaryHead: {
+		color: theme.palette.text.header,
+	},
+}));
 const ContactLinkView = observer(({link, onEdit, onDelete}) => {
+	const classes = useStyles();
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
 	const handleOpenMenuClick = (event) => {setMenuAnchorEl(event.currentTarget);};
 	const handleCloseMenu = () => {setMenuAnchorEl(null);};
@@ -32,9 +41,9 @@ const ContactLinkView = observer(({link, onEdit, onDelete}) => {
 	return <>
 		<ListItem>
 			<ListItemAvatar>
-				<Avatar>{link.name.charAt(0)}</Avatar></ListItemAvatar>
+				<Avatar><LinkIcon /></Avatar></ListItemAvatar>
 			<ListItemText
-					primary={<Link href={link.url} target="_blank" rel="noreferrer">{link.name}</Link>}
+					primary={<Link href={link.url} target="_blank" rel="noreferrer" className={classes.primaryHead}>{link.name}</Link>}
 					secondary={link.description}
 			/>
 			<ListItemSecondaryAction>

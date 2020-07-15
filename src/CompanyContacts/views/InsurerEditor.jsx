@@ -22,6 +22,7 @@ import {useStores} from "../../hooks/useStores";
 import {FileDocument} from "../model/FileDocument";
 import {action} from "mobx";
 import settings from "../../settings";
+import Grid from "@material-ui/core/Grid";
 
 const vertriebe = ["DPC", "PKM", "FBD", "IMPACT", "ForumFinanz"]//ACHTUNG: keycloak "Gruppen"
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +52,7 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 		visibility: insurer.visibility,
 		visibilityPublic: insurer.visibility.length === 0,
 	})
-	const imageUrl = values.imgBlobID !== "" ? settings.REST_API_CONTACTS + "/blobs/" + values.imgBlobID : values.imgDataURL !== "" ? values.imgDataURL : undefined;
+	const imageUrl = values.imgBlobID !== undefined ? settings.REST_API_CONTACTS + "/blobs/" + values.imgBlobID : values.imgDataURL;
 
 	const handleInputChange = e => {
 		const {name, value} = e.target
@@ -90,15 +91,24 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 				<TextField label="Name" type="text" value={values.name} name="name" onChange={handleInputChange}/>
 			</FormGroup>
 			<FormGroup row className={classes.formGroup}>
-				<TextField label="Straße" type="text" value={values.street} name="street" onChange={handleInputChange}/>
-				<TextField label="Hausnummer" type="text" value={values.number} name="number" onChange={handleInputChange}/>
-				<br/>
-				<TextField label="PLZ" type="text" value={values.zipCode} name="zipCode" onChange={handleInputChange}/>
-				<TextField label="Ort" type="text" value={values.city} name="city" onChange={handleInputChange}/>
+				<Grid container spacing={2}>
+					<Grid item>
+					<TextField label="Straße" type="text" value={values.street} name="street" onChange={handleInputChange}/>
+					</Grid>
+					<Grid item>
+						<TextField label="Hausnummer" type="text" value={values.number} name="number" onChange={handleInputChange}/>
+					</Grid>
+					<Grid item>
+						<TextField label="PLZ" type="text" value={values.zipCode} name="zipCode" onChange={handleInputChange}/>
+					</Grid>
+					<Grid item>
+						<TextField label="Ort" type="text" value={values.city} name="city" onChange={handleInputChange}/>
+					</Grid>
+				</Grid>
 			</FormGroup>
 			<FormGroup row className={classes.formGroup}>
 				<FormControl>
-					<TextareaAutosize id="hints" name="hints" value={values.hints} onChange={handleInputChange} rowsMin={6}
+					<TextField multiline id="hints" name="hints" value={values.hints} onChange={handleInputChange} rows={4} rowsMax={6}
 											placeholder="Hinweise und weitergehende Informationen zum Versicherer"/>
 					<FormHelperText>Hinweise und weitergehende Informationen zum Versicherer</FormHelperText>
 				</FormControl>
