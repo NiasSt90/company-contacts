@@ -20,6 +20,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import {useStores} from "./hooks/useStores";
 import {useHistory} from "react-router";
 import HomeIcon from '@material-ui/icons/Home';
+import ClearIcon from '@material-ui/icons/Clear';
 import {ArrowBack, Brightness4, Brightness7} from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
@@ -38,10 +39,11 @@ const useStyles = makeStyles(theme => ({
 	search: {
 		position: 'relative',
 		borderRadius: theme.shape.borderRadius,
-		backgroundColor: fade(theme.palette.common.black, 0.25),
+		backgroundColor: fade(theme.palette.common.black, 0.12),
 		'&:hover': {
-			backgroundColor: fade(theme.palette.common.black, 0.50),
+			backgroundColor: fade(theme.palette.common.black, 0.25),
 		},
+
 		marginRight: theme.spacing(2),
 		marginLeft: 0,
 		width: '100%',
@@ -106,10 +108,9 @@ const MyAppBar = observer(({props}) => {
 				<Typography className={classes.title} variant="h6" color={'secondary'} noWrap>{toolbarHandler.title}</Typography>
 				{toolbarHandler.showSearch && <div className={classes.search}>
 					<div className={classes.searchIcon}><SearchIcon color={'secondary'}/></div>
-					<InputBase onChange={toolbarHandler.searchAction} placeholder="Suchen…" classes={{
-									  input: classes.inputInput,
-								  }}
-					/>
+					<InputBase onChange={toolbarHandler.searchAction} placeholder="Suchen…"
+								  classes={{ input: classes.inputInput,}} value={toolbarHandler.searchValue}
+								  endAdornment={<ClearIcon color={"secondary"} onClick={toolbarHandler.clearSearch} />} />
 				</div>}
 				<div className={classes.grow}/>
 				<div className={classes.sectionDesktop}>

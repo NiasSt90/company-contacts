@@ -45,6 +45,7 @@ class InsurerViewModel {
     //	@action
     showAll(page=0) {
         this.activityHandler.onStart();
+        this.searchText = "";
         this.currentPage.page = page;
         this.contactsApi.index(this.currentPage).then(
               action("fetchSuccess", result => {
@@ -124,6 +125,7 @@ decorate(InsurerViewModel, {
 
     changeToPage: action,
     search: action,
+    searchClear: action,
     add: action,
     remove: action,
     load: action,

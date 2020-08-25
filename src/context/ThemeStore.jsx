@@ -148,6 +148,13 @@ class ThemeStore {
 						backgroundColor: secondaryBackgroundButtonColor,
 					}
 				},
+
+				MuiPagination: {
+					root: {
+						paddingTop:	'15px',
+						paddingBottom:	'15px'
+					},
+				},
 				MuiTableRow: {
 					root: {
 						'&:nth-of-type(odd)': {

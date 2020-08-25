@@ -55,7 +55,8 @@ const useStyles = makeStyles((theme) => ({
 
 		borderRight: '1px solid rgba(0, 0, 0, 0.12)',
 	 },
-    headTextColor: {
+    linkText: {
+		 color: theme.palette.text.header,
     },
 	 accordion: {
         backgroundColor:theme.palette.background.header,
@@ -169,8 +170,8 @@ const InsurerView = observer(({insurer, expanded}) => {
                         <Card className={classes.card}>
                             <CardContent className={classes.cardContent}>
                                 <div className={classes.section1}>
-                                    <Link to={{ pathname: "/insurer/" + insurer.id}}>
-                                        {insurer.imageUrl !== "" ?
+											  <Link to={{ pathname: "/insurer/" + insurer.id}} className={classes.linkText}>
+                                        {insurer.imageUrl ?
                                           <Typography component="img" src={insurer.imageUrl}/> :
                                           <Typography gutterBottom>{insurer.name}</Typography>
                                         }

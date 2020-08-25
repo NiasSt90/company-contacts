@@ -52,7 +52,7 @@ const InsurerEditor = ({insurer, open, onSave, onCancel}) => {
 		visibility: insurer.visibility,
 		visibilityPublic: insurer.visibility.length === 0,
 	})
-	const imageUrl = values.imgBlobID !== undefined ? settings.REST_API_CONTACTS + "/blobs/" + values.imgBlobID : values.imgDataURL;
+	const imageUrl = values.imgBlobID ? settings.REST_API_CONTACTS + "/blobs/" + values.imgBlobID : values.imgDataURL;
 
 	const handleInputChange = e => {
 		const {name, value} = e.target

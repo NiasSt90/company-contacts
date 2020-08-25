@@ -19,6 +19,7 @@ const InsurerListContainer = observer(({props}) => {
 			useEffect(() => {
 				toolbarHandler.changeToolbar({title: "Produktpartner - App", showSearch: true, showDefaultActions: true,
 					searchAction: (event) => insurerModel.search(event.target.value),
+					searchClearAction: (event) => insurerModel.showAll(),
 					actions: [
 						{name: "Reload", label: "Neu laden",icon: <RefreshIcon color={'secondary'}/>, onClick:() => insurerModel.showAll()}
 					]});
