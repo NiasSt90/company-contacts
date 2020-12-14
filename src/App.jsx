@@ -28,7 +28,7 @@ const App = observer(() => {
 	const {authStore, themeStore} = useStores();
 	return (
 			<KeycloakProvider
-					keycloak={keycloak} initConfig={{onLoad: 'login-required', promiseType: 'native', checkLoginIframe: false}}
+					keycloak={keycloak} initConfig={{onLoad: 'login-required', promiseType: 'native', checkLoginIframe: true}}
 					LoadingComponent={<CircularProgress/>} onEvent={authStore.onKeycloakEvent} onTokens={authStore.onToken}>
 				<ThemeProvider theme={themeStore.selectedTheme}>
 					<div className={classes.root}>

@@ -3,12 +3,13 @@ String gitCommitHash = "UNKNOWN"
 String gitVersionString = "UNKNOWN"
 
 podTemplate(label: label,
-		containers: [containerTemplate(name: 'docker', image: 'docker:stable', ttyEnabled: true, command: 'cat')],
+		runAsUser: "1000",
+		containers: [containerTemplate(name: 'podman', image: 'quay.io/podman/stable', ttyEnabled: true, command: 'cat')],
 		volumes: [
 				//bind-mount a local host directory as cache into /root/.npm to avoid downloading every time the whole internet ;)
 				hostPathVolume(hostPath: '/var/tmp/nodeModules', mountPath: '/root/.npm'),
-				// bind docker-socket do allow docker build inside this kubernetes pod
-				hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
+				//hostPathVolume(hostPath: '/dev/fuse', mountPath: '/dev/fuse'),
+				hostPathVolume(hostPath: '/var/tmp/containers-cache', mountPath: '/var/lib/containers')
 		]) {
 	node(label) {
 
@@ -33,25 +34,28 @@ podTemplate(label: label,
 			}
 		}
 		stage('Build') {
-			container('docker') {
-				sh 'docker build -t nexus-docker.onesty-tech.de/bvo-contacts-ui ' +
+			container('podman') {
+				sh 'id'
+				sh 'mount'
+				sh 'podman --log-level debug info'
+				sh 'podman build -t nexus-docker.onesty-tech.de/bvo-contacts-ui ' +
 					'--build-arg GIT_COMMIT="' + gitCommitHash.trim() + '" ' +
 					'--build-arg GIT_VERSION="' + gitVersionString.trim() + '" .'
 			}
 		}
 		stage('Verify') {
-			container('docker') {
+			container('podman') {
 				//TODO: integrate npm tests
 			}
 		}
 		stage('Deploy') {
-			container('docker') {
+			container('podman') {
 				if (env.GERRIT_BRANCH == 'master' && env.GERRIT_EVENT_TYPE == 'change-merged') {
 					//Push the docker image to our registry nexus-docker.onesty-tech.de
 					withCredentials([usernamePassword(credentialsId: 'nexus',
 							usernameVariable: 'NEXUS_LOGIN', passwordVariable: 'NEXUS_PASSWORD')]) {
-						sh 'docker login nexus-docker.onesty-tech.de -u $NEXUS_LOGIN -p $NEXUS_PASSWORD'
-						sh 'docker push nexus-docker.onesty-tech.de/bvo-contacts-ui'
+						sh 'podman login nexus-docker.onesty-tech.de -u $NEXUS_LOGIN -p $NEXUS_PASSWORD'
+						sh 'podman push nexus-docker.onesty-tech.de/bvo-contacts-ui'
 					}
 					if (env.DEPLOY_TARGET_STAGE && (env.DEPLOY_TARGET_STAGE == 'test only' || env.DEPLOY_TARGET_STAGE == 'all available')) {
 						//not available

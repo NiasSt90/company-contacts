@@ -46,6 +46,15 @@ spec:
         - image: nexus-docker.onesty-tech.de/bvo-contacts-ui
           imagePullPolicy: Always
           name: bvo-preview1
+          env:
+            - name: REST_API_CONTACTS
+              value: https://vo-contacts.barmenia.de
+            - name: KEYCLOAK_REALM
+              value: Barmenia
+            - name: KEYCLOAK_URL
+              value: https://vo-sso.barmenia.de/auth
+            - name: KEYCLOAK_CLIENTID
+              value: BVO_WebpartsReact
           resources:
             limits:
               cpu: 1
